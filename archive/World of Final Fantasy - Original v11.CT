@@ -1,0 +1,2194 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"World of Final Fantasy - Original v11 [Enable First]"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+-- UI-only guards for information rows. No writes to game memory or settings.
+local list=getAddressList()
+local owner=list.getMemoryRecordByID(1)
+if not owner then return end
+if WFF_InfoGuard and WFF_InfoGuard.owner~=owner then
+  WFF_InfoGuard.cleanup()
+end
+if WFF_InfoGuard then return end
+local state={owner=owner,records={},events={}}
+WFF_InfoGuard=state
+for _,id in ipairs({83,84,85}) do
+  local r=list.getMemoryRecordByID(id)
+  if r then
+    r.Active=false
+    r.Color=0x808080
+    state.records[id]=true
+    r.OnActivate=function(record,before,currentstate)
+      if before then return false end
+      return true
+    end
+  end
+end
+-- CE returns fresh Lua wrappers for records, so key by stable ID and ancestry,
+-- not by userdata table keys. Block dialogs only for this feature's info rows.
+-- Retain
+-- any previous handlers and delegate every unrelated row to them unchanged.
+for _,event in ipairs({'OnValueChange','OnAddressChange','OnTypeChange','OnDescriptionChange'}) do
+  local previous=list[event]
+  local handler=function(addresslist,record)
+    if record and state.records[record.ID] then
+      local parent=record.Parent
+      if parent and parent.ID==80 and parent.Parent and parent.Parent.ID==1 then
+        return true
+      end
+    end
+    if previous then return previous(addresslist,record) end
+    return false
+  end
+  state.events[event]={previous=previous,handler=handler}
+  list[event]=handler
+end
+state.cleanup=function()
+  for event,binding in pairs(state.events) do
+    if list[event]==binding.handler then list[event]=binding.previous end
+  end
+  if WFF_InfoGuard==state then WFF_InfoGuard=nil end
+end
+local previousDestroy=owner.OnDestroy
+owner.OnDestroy=function()
+  state.cleanup()
+  if previousDestroy then previousDestroy() end
+end
+
+{$asm}
+// Cost-availability check and spending are independent, but share our flags.
+aobscanmodule(WFF_SPCheck,WOFF.exe,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20 5B C3 CC)
+aobscanmodule(WFF_SPCheckBase,WOFF.exe,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20 5B C3 48 83 FA 03)
+aobscanmodule(WFF_SPSpend,WOFF.exe,0F B7 81 E8 00 00 00 3B C3 72 2B 66 2B C3 66 01 99 EA 00 00 00)
+assert(WFF_SPCheck,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20)
+assert(WFF_SPCheckBase,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20)
+assert(WFF_SPSpend,0F B7 81 E8 00 00 00 3B C3 72 2B 66 2B C3)
+alloc(WFF_BoardCode,512,WFF_SPCheck)
+label(WFF_CFG)
+label(WFF_Availability)
+label(WFF_AvailabilityBase)
+label(WFF_EvaluateSP)
+label(WFF_AvailabilityDone)
+label(WFF_Spending)
+label(WFF_ApplyCost)
+label(WFF_KeepSP)
+label(WFF_PaySP)
+label(WFF_SPFailure)
+registersymbol(WFF_CFG)
+registersymbol(WFF_SPCheck)
+registersymbol(WFF_SPCheckBase)
+registersymbol(WFF_SPSpend)
+
+WFF_BoardCode:
+WFF_CFG:
+db 00 00
+align 10
+WFF_Availability:
+call WFF_EvaluateSP
+add rsp,20
+jmp WFF_SPCheck+10
+WFF_AvailabilityBase:
+call WFF_EvaluateSP
+add rsp,20
+jmp WFF_SPCheckBase+10
+WFF_EvaluateSP:
+// Preserve the original comparison result before consulting our option.
+setae al
+pushfq
+cmp byte ptr [WFF_CFG],0
+je WFF_AvailabilityDone
+mov al,1
+WFF_AvailabilityDone:
+popfq
+ret
+
+WFF_Spending:
+cmp byte ptr [WFF_CFG],0
+jne WFF_ApplyCost
+// Recreate the original affordability comparison when Ignore SP is disabled.
+cmp eax,ebx
+jb WFF_SPFailure
+WFF_ApplyCost:
+cmp byte ptr [WFF_CFG+1],0
+jne WFF_KeepSP
+cmp eax,ebx
+jae WFF_PaySP
+// Ignore SP never lets a 16-bit point balance wrap below zero.
+xor eax,eax
+jmp WFF_KeepSP
+WFF_PaySP:
+sub ax,bx
+WFF_KeepSP:
+jmp WFF_SPSpend+E
+WFF_SPFailure:
+jmp WFF_SPSpend+36
+
+WFF_SPCheck+9:
+jmp WFF_Availability
+nop 2
+WFF_SPCheckBase+9:
+jmp WFF_AvailabilityBase
+nop 2
+WFF_SPSpend+9:
+jmp WFF_Spending
+
+[DISABLE]
+WFF_SPCheck+9:
+db 0F 93 C0 48 83 C4 20
+WFF_SPCheckBase+9:
+db 0F 93 C0 48 83 C4 20
+WFF_SPSpend+9:
+db 72 2B 66 2B C3
+unregistersymbol(WFF_CFG)
+unregistersymbol(WFF_SPCheck)
+unregistersymbol(WFF_SPCheckBase)
+unregistersymbol(WFF_SPSpend)
+dealloc(WFF_BoardCode)
+</AssemblerScript>
+      <Options moDeactivateChildrenAsWell="1" />
+      <CheatEntries>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>"Infinite Gil - Hold 9,999,999 [Balance stays after disable]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_GilTimer then error('Gil hold is already active.') end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Enable the table first.') end
+local pid=getOpenedProcessID()
+local function gilAddress()
+  if getOpenedProcessID()~=pid then return nil end
+  local root=readQword(b+0x3439EC0)
+  if not root or root&lt;0x10000 or root&gt;=0x7FFFFFFFFFFF then return nil end
+  local a=root+0x37368
+  local v=readInteger(a)
+  if not v or v&lt;0 or v&gt;9999999 then return nil end
+  return a
+end
+if not gilAddress() then error('Gil data unavailable. Load your save first.') end
+WFF_GilTimer=createTimer(nil,false)
+WFF_GilTimer.Interval=100
+WFF_GilTimer.OnTimer=function()
+  local a=gilAddress()
+  if a then writeInteger(a,9999999) end
+end
+WFF_GilTimer.Enabled=true
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_GilTimer then
+  WFF_GilTimer.Enabled=false
+  WFF_GilTimer.destroy()
+  WFF_GilTimer=nil
+end
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"Current Gil (editable)"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>WOFF.exe+3439EC0</Address>
+          <Offsets>
+            <Offset>37368</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>20</ID>
+          <Description>"Ignore SP Cost Requirement"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+WFF_CFG+0:
+db 01
+[DISABLE]
+WFF_CFG+0:
+db 00
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
+          <Description>"Infinite SP - No Deduction"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+WFF_CFG+1:
+db 01
+[DISABLE]
+WFF_CFG+1:
+db 00
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>30</ID>
+          <Description>"XP Options - Enable [XP/levels update after battle, back on field]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(WFF_XPGain,WOFF.exe,41 03 F0 3B C6 0F 42 F0 48 81 C1 98 00 00 00 E8 ?? ?? ?? ?? 48 8B 0D)
+assert(WFF_XPGain,41 03 F0 3B C6)
+alloc(WFF_XPCode,512,WFF_XPGain)
+label(WFF_XPFactor)
+label(WFF_XPMaxLevel)
+label(WFF_XPOriginal)
+label(WFF_XPReturn)
+label(WFF_XPScaled)
+label(WFF_XPClamp)
+label(WFF_XPZero)
+label(WFF_XPSetCap)
+registersymbol(WFF_XPFactor)
+registersymbol(WFF_XPMaxLevel)
+registersymbol(WFF_XPGain)
+
+WFF_XPCode:
+// Here EAX is this recipient's level-99 total; R8D is current total XP.
+// ESI is the recipient-specific award, after any upstream XP sharing.
+test esi,esi
+js WFF_XPOriginal
+push r9
+sub rsp,10
+movups [rsp],xmm0
+test esi,esi
+jz WFF_XPZero
+cmp byte ptr [WFF_XPMaxLevel],0
+jne WFF_XPSetCap
+// A 64-bit double intermediate avoids wrapping the 32-bit cumulative total.
+mov r9d,esi
+cvtsi2sd xmm0,r9
+// Factor is Double: 0 = none, 1 = normal, 50000 = fifty thousand times.
+mulsd xmm0,[WFF_XPFactor]
+ucomisd xmm0,xmm0
+jp WFF_XPScaled
+mov r9d,eax
+sub r9d,r8d
+// At/past cap, leave the existing native cap check in control.
+cmp eax,r8d
+jbe WFF_XPZero
+push rax
+sub rsp,10
+movups [rsp],xmm1
+cvtsi2sd xmm1,r9
+ucomisd xmm0,xmm1
+movups xmm1,[rsp]
+lea rsp,[rsp+10]
+pop rax
+jae WFF_XPSetCap
+cvttsd2si r9,xmm0
+test r9,r9
+js WFF_XPZero
+add r9,r8
+mov esi,r9d
+jmp WFF_XPClamp
+WFF_XPScaled:
+// Invalid (NaN) factor falls back to the unscaled award, without overflow.
+mov r9d,esi
+add r9,r8
+mov esi,r9d
+cmp r9,rax
+jbe WFF_XPClamp
+WFF_XPSetCap:
+mov esi,eax
+jmp WFF_XPClamp
+WFF_XPZero:
+mov esi,r8d
+WFF_XPClamp:
+movups xmm0,[rsp]
+add rsp,10
+pop r9
+cmp eax,esi
+jmp WFF_XPReturn
+WFF_XPOriginal:
+add esi,r8d
+cmp eax,esi
+WFF_XPReturn:
+jmp WFF_XPGain+5
+align 10
+WFF_XPFactor:
+dq (double)1.0
+WFF_XPMaxLevel:
+db 00
+
+WFF_XPGain:
+jmp WFF_XPCode
+
+[DISABLE]
+WFF_XPGain:
+db 41 03 F0 3B C6
+unregistersymbol(WFF_XPFactor)
+unregistersymbol(WFF_XPMaxLevel)
+unregistersymbol(WFF_XPGain)
+dealloc(WFF_XPCode)
+</AssemblerScript>
+          <Options moDeactivateChildrenAsWell="1" />
+          <CheatEntries>
+            <CheatEntry>
+              <ID>31</ID>
+              <Description>"XP Multiplier (0 = none; 1 = normal; 50000 supported)"</Description>
+              <VariableType>Double</VariableType>
+              <Address>WFF_XPFactor</Address>
+              <DropDownList ReadOnly="0" DescriptionOnly="1" DisplayValueAsItem="1">0:No XP
+1:Normal
+2:2x
+5:5x
+10:10x
+20:20x
+100:100x
+1000:1000x
+50000:50000x</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>32</ID>
+              <Description>"Max Level from Next Positive XP Award [Overrides multiplier]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_XPMaxLevel:
+db 01
+[DISABLE]
+WFF_XPMaxLevel:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>40</ID>
+          <Description>"Battle HP Options - Enable"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_HPApply,WOFF.exe,F3 0F 2C C7 66 0F 6E C0 0F 5B C0 F3 0F 5C C8 F3 0F 5F CB)
+assert(WFF_HPApply,F3 0F 2C C7 66 0F 6E C0)
+alloc(WFF_HPCode,1024,WFF_HPApply)
+label(WFF_GodMode)
+label(WFF_MaxVitals)
+label(WFF_OneHit)
+label(WFF_PlayerDamage)
+label(WFF_EnemyDamage)
+label(WFF_DamageCap)
+label(WFF_HPParty)
+label(WFF_HPEnemy)
+label(WFF_HPScale)
+label(WFF_HPZero)
+label(WFF_HPCap)
+label(WFF_LastHPActor)
+label(WFF_HPDone)
+registersymbol(WFF_HPApply)
+registersymbol(WFF_GodMode)
+registersymbol(WFF_MaxVitals)
+registersymbol(WFF_OneHit)
+registersymbol(WFF_PlayerDamage)
+registersymbol(WFF_EnemyDamage)
+registersymbol(WFF_LastHPActor)
+WFF_HPCode:
+cvttss2si eax,xmm7
+pushfq
+mov [WFF_LastHPActor],rbx
+// Only positive HP loss to the independently observed player side is blocked.
+test eax,eax
+jle WFF_HPDone
+cmp dword ptr [rbx+2E34],0
+je WFF_HPParty
+cmp dword ptr [rbx+2E34],1
+je WFF_HPEnemy
+jmp WFF_HPDone
+WFF_HPParty:
+cmp byte ptr [WFF_MaxVitals],0
+jne WFF_HPZero
+cmp byte ptr [WFF_GodMode],0
+jne WFF_HPZero
+cvtsi2sd xmm0,eax
+mulsd xmm0,[WFF_EnemyDamage]
+jmp WFF_HPScale
+WFF_HPEnemy:
+cmp byte ptr [WFF_OneHit],0
+je @f
+movss xmm0,[rbx+29CC]
+cvtss2sd xmm0,xmm0
+jmp WFF_HPScale
+@@:
+cvtsi2sd xmm0,eax
+mulsd xmm0,[WFF_PlayerDamage]
+WFF_HPScale:
+// NaN falls back to native damage. Negative factors mean zero damage.
+ucomisd xmm0,xmm0
+jp WFF_HPDone
+comisd xmm0,[WFF_DamageCap]
+jae WFF_HPCap
+cvttsd2si eax,xmm0
+test eax,eax
+jns WFF_HPDone
+WFF_HPZero:
+xor eax,eax
+jmp WFF_HPDone
+WFF_HPCap:
+mov eax,#2147483000
+WFF_HPDone:
+popfq
+movd xmm0,eax
+jmp WFF_HPApply+8
+align 10
+WFF_GodMode:
+db 00
+WFF_MaxVitals:
+db 00
+WFF_OneHit:
+db 00
+align 8
+WFF_PlayerDamage:
+dq (double)1.0
+WFF_EnemyDamage:
+dq (double)1.0
+WFF_DamageCap:
+dq (double)2147483000.0
+WFF_LastHPActor:
+dq 0
+WFF_HPApply:
+jmp WFF_HPCode
+nop 3
+[DISABLE]
+WFF_HPApply:
+db F3 0F 2C C7 66 0F 6E C0
+unregistersymbol(WFF_HPApply)
+unregistersymbol(WFF_GodMode)
+unregistersymbol(WFF_MaxVitals)
+unregistersymbol(WFF_OneHit)
+unregistersymbol(WFF_PlayerDamage)
+unregistersymbol(WFF_EnemyDamage)
+unregistersymbol(WFF_LastHPActor)
+dealloc(WFF_HPCode)
+</AssemblerScript>
+          <Options moDeactivateChildrenAsWell="1" />
+          <CheatEntries>
+            <CheatEntry>
+              <ID>41</ID>
+              <Description>"God Mode - Party HP Damage Blocked [Not status immunity]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_GodMode:
+db 01
+[DISABLE]
+WFF_GodMode:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>42</ID>
+              <Description>"Always Max Health/AP - Living Party, Battle"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_VitalsTimer then error('Max-vitals timer is already active.') end
+local pid=getOpenedProcessID()
+local classes={getAddress('WOFF.exe+2F4B168'),getAddress('WOFF.exe+2F39FC0')}
+local flag=getAddress('WFF_MaxVitals')
+local actors={}
+for _,vt in ipairs(classes) do
+  local bytes={}
+  local value=vt
+  for i=1,8 do bytes[i]=string.format('%02X',value%256); value=math.floor(value/256) end
+  local hits=AOBScan(table.concat(bytes,' '),'+W-C')
+  if hits then
+    for i=0,hits.Count-1 do
+      local a=tonumber(hits[i],16)
+      local side=readInteger(a+0x2E34)
+      if side==0 or side==-1 or side==0xFFFFFFFF then actors[#actors+1]={address=a,vtable=vt} end
+    end
+    hits.destroy()
+  end
+end
+if #actors==0 then error('No verified party actor pool found.') end
+local function refill()
+  if getOpenedProcessID()~=pid then
+    if WFF_VitalsTimer then WFF_VitalsTimer.destroy();WFF_VitalsTimer=nil end
+    return
+  end
+  for _,actor in ipairs(actors) do
+    local a=actor.address
+    if readQword(a)==actor.vtable and readInteger(a+0x2E34)==0 then
+      local hp,maxHP=readFloat(a+0x29C8),readFloat(a+0x29CC)
+      local maxAP=readFloat(a+0x29D4)
+      if hp and maxHP and hp&gt;0 and maxHP&gt;=hp and maxHP&lt;10000000 then
+        writeFloat(a+0x29C8,maxHP)
+        if maxAP and maxAP&gt;=0 and maxAP&lt;=1000 then writeFloat(a+0x29D0,maxAP) end
+      end
+    end
+  end
+end
+WFF_VitalsTimer=createTimer(nil,false)
+WFF_VitalsTimer.Interval=100
+WFF_VitalsTimer.OnTimer=refill
+writeBytes(flag,1)
+refill()
+WFF_VitalsTimer.Enabled=true
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_VitalsTimer then WFF_VitalsTimer.destroy();WFF_VitalsTimer=nil end
+local flag=getAddressSafe('WFF_MaxVitals')
+if flag then writeBytes(flag,0) end
+{$asm}
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>43</ID>
+              <Description>"One-Hit Kill - Enemies [Overrides damage multiplier]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_OneHit:
+db 01
+[DISABLE]
+WFF_OneHit:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>44</ID>
+              <Description>"Player Damage Multiplier (to enemies; 0 = none, 1 = normal)"</Description>
+              <VariableType>Double</VariableType>
+              <Address>WFF_PlayerDamage</Address>
+              <DropDownList ReadOnly="0" DescriptionOnly="1" DisplayValueAsItem="1">0:No damage
+0.25:Quarter damage
+0.5:Half damage
+1:Normal
+2:2x
+5:5x
+10:10x
+100:100x</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>45</ID>
+              <Description>"Enemy Damage Multiplier (to party; 0 = none, 1 = normal)"</Description>
+              <VariableType>Double</VariableType>
+              <Address>WFF_EnemyDamage</Address>
+              <DropDownList ReadOnly="0" DescriptionOnly="1" DisplayValueAsItem="1">0:No damage
+0.25:Quarter damage
+0.5:Half damage
+1:Normal
+2:2x
+5:5x
+10:10x
+100:100x</DropDownList>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>50</ID>
+          <Description>"Infinite Battle AP - Party Only [Refreshes on AP change]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_APRegen,WOFF.exe,F3 0F 11 B7 D0 29 00 00 48 8B 0D ?? ?? ?? ?? 48 8B 01 FF 90 40 02 00 00)
+assert(WFF_APRegen,F3 0F 11 B7 D0 29 00 00)
+alloc(WFF_APRegenCode,256,WFF_APRegen)
+label(WFF_APRegenOriginal)
+label(WFF_APRegenDone)
+registersymbol(WFF_APRegen)
+WFF_APRegenCode:
+pushfq
+cmp dword ptr [rdi+2E34],0
+jne WFF_APRegenOriginal
+sub rsp,10
+movups [rsp],xmm0
+movss xmm0,[rdi+29D4]
+movss [rdi+29D0],xmm0
+movups xmm0,[rsp]
+add rsp,10
+jmp WFF_APRegenDone
+WFF_APRegenOriginal:
+movss [rdi+29D0],xmm6
+WFF_APRegenDone:
+popfq
+jmp WFF_APRegen+8
+WFF_APRegen:
+jmp WFF_APRegenCode
+nop 3
+aobscanmodule(WFF_APSet,WOFF.exe,F3 0F 11 B3 D0 29 00 00 0F 28 74 24 30 0F 28 7C 24 20)
+assert(WFF_APSet,F3 0F 11 B3 D0 29 00 00)
+alloc(WFF_APSetCode,256,WFF_APSet)
+label(WFF_APSetOriginal)
+label(WFF_APSetDone)
+registersymbol(WFF_APSet)
+WFF_APSetCode:
+pushfq
+cmp dword ptr [rbx+2E34],0
+jne WFF_APSetOriginal
+sub rsp,10
+movups [rsp],xmm0
+movss xmm0,[rbx+29D4]
+movss [rbx+29D0],xmm0
+movups xmm0,[rsp]
+add rsp,10
+jmp WFF_APSetDone
+WFF_APSetOriginal:
+movss [rbx+29D0],xmm6
+WFF_APSetDone:
+popfq
+jmp WFF_APSet+8
+WFF_APSet:
+jmp WFF_APSetCode
+nop 3
+aobscanmodule(WFF_APDamage,WOFF.exe,F3 0F 11 B3 D0 29 00 00 48 8B 5C 24 58 48 8B 74 24 60)
+assert(WFF_APDamage,F3 0F 11 B3 D0 29 00 00)
+alloc(WFF_APDamageCode,256,WFF_APDamage)
+label(WFF_APDamageOriginal)
+label(WFF_APDamageDone)
+registersymbol(WFF_APDamage)
+WFF_APDamageCode:
+pushfq
+cmp dword ptr [rbx+2E34],0
+jne WFF_APDamageOriginal
+sub rsp,10
+movups [rsp],xmm0
+movss xmm0,[rbx+29D4]
+movss [rbx+29D0],xmm0
+movups xmm0,[rsp]
+add rsp,10
+jmp WFF_APDamageDone
+WFF_APDamageOriginal:
+movss [rbx+29D0],xmm6
+WFF_APDamageDone:
+popfq
+jmp WFF_APDamage+8
+WFF_APDamage:
+jmp WFF_APDamageCode
+nop 3
+[DISABLE]
+WFF_APRegen:
+db F3 0F 11 B7 D0 29 00 00
+unregistersymbol(WFF_APRegen)
+dealloc(WFF_APRegenCode)
+WFF_APSet:
+db F3 0F 11 B3 D0 29 00 00
+unregistersymbol(WFF_APSet)
+dealloc(WFF_APSetCode)
+WFF_APDamage:
+db F3 0F 11 B3 D0 29 00 00
+unregistersymbol(WFF_APDamage)
+dealloc(WFF_APDamageCode)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>51</ID>
+          <Description>"AP Cost of Abilities Always 0 [Unlocked abilities only]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_AbilityCost,WOFF.exe,48 83 EC 38 80 BA EC 01 00 00 00 48 8B C1 0F 29 74 24 20)
+assert(WFF_AbilityCost,48 83 EC 38 80 BA EC 01 00 00 00)
+alloc(WFF_AbilityCostCode,256,WFF_AbilityCost)
+label(WFF_CostCheckSide)
+label(WFF_CostOriginal)
+registersymbol(WFF_AbilityCost)
+WFF_AbilityCostCode:
+pushfq
+// RCX points at actor statistics (+29B0), not the whole actor.
+mov rax,WOFF.exe+2F4B168
+cmp [rcx-29B0],rax
+je WFF_CostCheckSide
+mov rax,WOFF.exe+2F39FC0
+cmp [rcx-29B0],rax
+jne WFF_CostOriginal
+WFF_CostCheckSide:
+cmp dword ptr [rcx+484],0
+jne WFF_CostOriginal
+popfq
+xorps xmm0,xmm0
+ret
+WFF_CostOriginal:
+popfq
+sub rsp,38
+cmp byte ptr [rdx+1EC],0
+jmp WFF_AbilityCost+B
+WFF_AbilityCost:
+jmp WFF_AbilityCostCode
+nop 6
+// Party command menu affordability and both cost-icon views.
+aobscanmodule(WFF_CostMenu,WOFF.exe,F3 0F 10 70 1C 4D 85 DB 74 3C 49 8B 43 20)
+aobscanmodule(WFF_CostIcons,WOFF.exe,F3 0F 10 40 1C F3 0F 59 05 4D 52 92 02)
+aobscanmodule(WFF_CostIcons2,WOFF.exe,F3 0F 10 40 1C 49 8B 43 20 F3 0F 59 C6)
+assert(WFF_CostMenu,F3 0F 10 70 1C)
+assert(WFF_CostIcons,F3 0F 10 40 1C)
+assert(WFF_CostIcons2,F3 0F 10 40 1C)
+registersymbol(WFF_CostMenu)
+registersymbol(WFF_CostIcons)
+registersymbol(WFF_CostIcons2)
+WFF_CostMenu:
+xorps xmm6,xmm6
+nop 2
+WFF_CostIcons:
+xorps xmm0,xmm0
+nop 2
+WFF_CostIcons2:
+xorps xmm0,xmm0
+nop 2
+[DISABLE]
+WFF_AbilityCost:
+db 48 83 EC 38 80 BA EC 01 00 00 00
+WFF_CostMenu:
+db F3 0F 10 70 1C
+WFF_CostIcons:
+db F3 0F 10 40 1C
+WFF_CostIcons2:
+db F3 0F 10 40 1C
+unregistersymbol(WFF_AbilityCost)
+unregistersymbol(WFF_CostMenu)
+unregistersymbol(WFF_CostIcons)
+unregistersymbol(WFF_CostIcons2)
+dealloc(WFF_AbilityCostCode)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>60</ID>
+          <Description>"Item Usage Options - Enable [Battle + Field]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_ItemSingle,WOFF.exe,FF C9 41 BA 01 00 00 00 89 48 04 48 8B 5C 24 08)
+assert(WFF_ItemSingle,FF C9 41 BA 01 00 00 00)
+alloc(WFF_ItemSingleCode,256,WFF_ItemSingle)
+label(WFF_ItemSingleKeep)
+label(WFF_ItemSingleFinish)
+registersymbol(WFF_ItemSingle)
+aobscanmodule(WFF_ItemMisc,WOFF.exe,41 2B CA 89 48 04 85 C9 7F 0A C7 00 FF FF FF FF)
+assert(WFF_ItemMisc,41 2B CA 89 48 04)
+alloc(WFF_ItemMiscCode,256,WFF_ItemMisc)
+label(WFF_ItemMiscKeep)
+label(WFF_ItemMiscFinish)
+registersymbol(WFF_ItemMisc)
+aobscanmodule(WFF_ItemBattle,WOFF.exe,41 2B C2 89 42 04 85 C0 7F 0A C7 02 FF FF FF FF)
+assert(WFF_ItemBattle,41 2B C2 89 42 04)
+alloc(WFF_ItemBattleCode,256,WFF_ItemBattle)
+label(WFF_ItemBattleKeep)
+label(WFF_ItemBattleFinish)
+registersymbol(WFF_ItemBattle)
+label(WFF_ItemCFG)
+registersymbol(WFF_ItemCFG)
+WFF_ItemSingleCode:
+dec ecx
+pushfq
+cmp byte ptr [WFF_ItemCFG],0
+je WFF_ItemSingleKeep
+mov ecx,[rax+4]
+jmp WFF_ItemSingleFinish
+WFF_ItemSingleKeep:
+cmp byte ptr [WFF_ItemCFG+1],0
+je WFF_ItemSingleFinish
+test ecx,ecx
+jg WFF_ItemSingleFinish
+mov ecx,1
+WFF_ItemSingleFinish:
+popfq
+mov r10d,1
+jmp WFF_ItemSingle+8
+WFF_ItemSingle:
+jmp WFF_ItemSingleCode
+nop 3
+WFF_ItemMiscCode:
+sub ecx,r10d
+pushfq
+test r10d,r10d
+jle WFF_ItemMiscFinish
+cmp byte ptr [WFF_ItemCFG],0
+je WFF_ItemMiscKeep
+mov ecx,[rax+4]
+jmp WFF_ItemMiscFinish
+WFF_ItemMiscKeep:
+cmp byte ptr [WFF_ItemCFG+1],0
+je WFF_ItemMiscFinish
+test ecx,ecx
+jg WFF_ItemMiscFinish
+mov ecx,1
+WFF_ItemMiscFinish:
+popfq
+mov [rax+4],ecx
+jmp WFF_ItemMisc+6
+WFF_ItemMisc:
+jmp WFF_ItemMiscCode
+nop 1
+WFF_ItemBattleCode:
+sub eax,r10d
+pushfq
+test r10d,r10d
+jle WFF_ItemBattleFinish
+cmp byte ptr [WFF_ItemCFG],0
+je WFF_ItemBattleKeep
+mov eax,[rdx+4]
+jmp WFF_ItemBattleFinish
+WFF_ItemBattleKeep:
+cmp byte ptr [WFF_ItemCFG+1],0
+je WFF_ItemBattleFinish
+test eax,eax
+jg WFF_ItemBattleFinish
+mov eax,1
+WFF_ItemBattleFinish:
+popfq
+mov [rdx+4],eax
+jmp WFF_ItemBattle+6
+WFF_ItemBattle:
+jmp WFF_ItemBattleCode
+nop 1
+WFF_ItemSingleCode+E0:
+WFF_ItemCFG:
+db 00 00
+[DISABLE]
+WFF_ItemSingle:
+db FF C9 41 BA 01 00 00 00
+unregistersymbol(WFF_ItemSingle)
+dealloc(WFF_ItemSingleCode)
+WFF_ItemMisc:
+db 41 2B CA 89 48 04
+unregistersymbol(WFF_ItemMisc)
+dealloc(WFF_ItemMiscCode)
+WFF_ItemBattle:
+db 41 2B C2 89 42 04
+unregistersymbol(WFF_ItemBattle)
+dealloc(WFF_ItemBattleCode)
+unregistersymbol(WFF_ItemCFG)
+</AssemblerScript>
+          <Options moDeactivateChildrenAsWell="1" />
+          <CheatEntries>
+            <CheatEntry>
+              <ID>61</ID>
+              <Description>"Infinite Item Usage [Must own item]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_ItemCFG+0:
+db 01
+[DISABLE]
+WFF_ItemCFG+0:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>62</ID>
+              <Description>"Never Below 1 Item When Used"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_ItemCFG+1:
+db 01
+[DISABLE]
+WFF_ItemCFG+1:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>70</ID>
+          <Description>"Easy Imprism - Ignore Conditions + Boost Chance + No Prisms"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_CaptureReady,WOFF.exe,33 C0 0F 57 C0 0F 2F 41 10 0F 92 C0 89 02 48 8B C2 C3)
+aobscanmodule(WFF_CaptureChance,WOFF.exe,F3 0F 10 BB E8 34 00 00 F3 0F 58 BB 48 2B 00 00 0F 2F FE 76 7C)
+assert(WFF_CaptureReady,33 C0 0F 57 C0)
+assert(WFF_CaptureChance,F3 0F 10 BB E8 34 00 00)
+alloc(WFF_CaptureCode,512,WFF_CaptureReady)
+label(WFF_ReadyNative)
+label(WFF_ChanceCode)
+label(WFF_ChanceNative)
+label(WFF_ChanceDone)
+label(WFF_CapturePercent)
+registersymbol(WFF_CaptureReady)
+registersymbol(WFF_CaptureChance)
+
+WFF_CaptureCode:
+// Readiness method: RCX is the capture component; +8 is its actor.
+pushfq
+push r8
+push r9
+mov r8,[rcx+8]
+test r8,r8
+je WFF_ReadyNative
+mov r9,WOFF.exe+2F39FC0
+cmp [r8],r9
+jne WFF_ReadyNative
+cmp dword ptr [r8+2E34],1
+jne WFF_ReadyNative
+cmp dword ptr [r8+2B40],0
+jle WFF_ReadyNative
+pop r9
+pop r8
+popfq
+// Native caller still checks target eligibility / required Prism separately.
+xor eax,eax
+xorps xmm0,xmm0
+mov al,1
+jmp WFF_CaptureReady+C
+WFF_ReadyNative:
+pop r9
+pop r8
+popfq
+xor eax,eax
+xorps xmm0,xmm0
+jmp WFF_CaptureReady+5
+
+WFF_ChanceCode:
+// This executes only AFTER the native eligibility check passed.
+pushfq
+push rax
+mov rax,WOFF.exe+2F39FC0
+cmp [rbx],rax
+jne WFF_ChanceNative
+cmp dword ptr [rbx+2E34],1
+jne WFF_ChanceNative
+cmp dword ptr [rbx+2B40],0
+jle WFF_ChanceNative
+movss xmm7,[WFF_CapturePercent]
+jmp WFF_ChanceDone
+WFF_ChanceNative:
+movss xmm7,[rbx+34E8]
+WFF_ChanceDone:
+pop rax
+popfq
+jmp WFF_CaptureChance+8
+align 10
+WFF_CapturePercent:
+dd (float)100.0
+
+WFF_CaptureReady:
+jmp WFF_CaptureCode
+WFF_CaptureChance:
+jmp WFF_ChanceCode
+nop 3
+
+
+aobscanmodule(WFF_PrismEligibility,WOFF.exe,44 89 44 24 18 53 56 57 48 83 EC 30 33 F6 48 8B DA 89 74 24 50 48 8B F9)
+aobscanmodule(WFF_PrismConsume,WOFF.exe,39 BE 74 2B 00 00 74 78 48 8B 05 A9 B0 1F 03 44 8B C7)
+assert(WFF_PrismEligibility,44 89 44 24 18)
+assert(WFF_PrismConsume,39 BE 74 2B 00 00)
+alloc(WFF_PrismCode,512,WFF_PrismEligibility)
+label(WFF_PrismNative)
+label(WFF_PrismConsumeCode)
+label(WFF_PrismConsumeNative)
+registersymbol(WFF_PrismEligibility)
+registersymbol(WFF_PrismConsume)
+
+WFF_PrismCode:
+pushfq
+push rax
+mov rax,WOFF.exe+2F39FC0
+cmp [rcx],rax
+jne WFF_PrismNative
+cmp dword ptr [rcx+2E34],1
+jne WFF_PrismNative
+cmp dword ptr [rcx+2B40],0
+jle WFF_PrismNative
+pop rax
+popfq
+// Retain native living-target, capture-state, and battle eligibility checks.
+mov dword ptr [rsp+18],0
+jmp WFF_PrismEligibility+5
+WFF_PrismNative:
+pop rax
+popfq
+mov [rsp+18],r8d
+jmp WFF_PrismEligibility+5
+
+WFF_PrismConsumeCode:
+pushfq
+push rax
+mov rax,WOFF.exe+2F39FC0
+cmp [rsi],rax
+jne WFF_PrismConsumeNative
+cmp dword ptr [rsi+2E34],1
+jne WFF_PrismConsumeNative
+cmp dword ptr [rsi+2B40],0
+jle WFF_PrismConsumeNative
+pop rax
+popfq
+// Capture-specific cleanup only: skip both normal and special Prism deduction.
+// Ownership bookkeeping before this point and battle cleanup after it remain.
+jmp WFF_PrismConsume+A2
+WFF_PrismConsumeNative:
+pop rax
+popfq
+cmp [rsi+2B74],edi
+jmp WFF_PrismConsume+6
+
+WFF_PrismEligibility:
+jmp WFF_PrismCode
+WFF_PrismConsume:
+jmp WFF_PrismConsumeCode
+nop
+
+
+[DISABLE]
+
+WFF_CaptureReady:
+db 33 C0 0F 57 C0
+WFF_CaptureChance:
+db F3 0F 10 BB E8 34 00 00
+unregistersymbol(WFF_CaptureReady)
+unregistersymbol(WFF_CaptureChance)
+dealloc(WFF_CaptureCode)
+
+WFF_PrismEligibility:
+db 44 89 44 24 18
+WFF_PrismConsume:
+db 39 BE 74 2B 00 00
+unregistersymbol(WFF_PrismEligibility)
+unregistersymbol(WFF_PrismConsume)
+dealloc(WFF_PrismCode)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>80</ID>
+          <Description>"Next Capture Replacement - Enable [Experimental; ONE capture per battle]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_CloneArgs,WOFF.exe,44 8B CB 89 7C 24 20 44 8B C0 48 8D 54 24 58 49 8B CE E8 69 F4 FF FF)
+aobscanmodule(WFF_OwnedGrant,WOFF.exe,48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 8B DA 48 C7 44 24 30 00 00 00 00)
+define(WFF_CloneArgsHook,WFF_CloneArgs+7)
+assert(WFF_CloneArgsHook,44 8B C0 48 8D 54 24 58)
+assert(WFF_OwnedGrant,48 89 5C 24 08)
+alloc(WFF_ReplacementCode,2048,WFF_CloneArgsHook)
+label(WFF_QueueNative)
+label(WFF_QueueLoop)
+label(WFF_QueueFound)
+label(WFF_GrantCode)
+label(WFF_GrantNative)
+label(WFF_NextCaptureID)
+label(WFF_NextCaptureArmed)
+label(WFF_LastCaptureSourceID)
+label(WFF_LastCaptureSelectedID)
+label(WFF_PendingCaptureID)
+label(WFF_CaptureAllowedIDs)
+registersymbol(WFF_CloneArgsHook)
+registersymbol(WFF_OwnedGrant)
+registersymbol(WFF_NextCaptureID)
+registersymbol(WFF_NextCaptureArmed)
+registersymbol(WFF_LastCaptureSourceID)
+registersymbol(WFF_LastCaptureSelectedID)
+
+WFF_ReplacementCode:
+// Visual clone runs unchanged. Queue a choice only on the observed capture path.
+mov r8d,eax
+lea rdx,[rsp+58]
+pushfq
+push rax
+push rcx
+push r10
+push r11
+cmp dword ptr [WFF_NextCaptureArmed],1
+jne WFF_QueueNative
+mov r10,WOFF.exe+5A0D0F
+cmp [rsp+70],r10
+jne WFF_QueueNative
+mov r10,WOFF.exe+2F39FC0
+cmp [rsi],r10
+jne WFF_QueueNative
+cmp dword ptr [rsi+2E34],1
+jne WFF_QueueNative
+cmp dword ptr [rsi+2B40],0
+jle WFF_QueueNative
+mov r10,WOFF.exe+2F33B50
+cmp [r14],r10
+jne WFF_QueueNative
+cmp dword ptr [rsp+88],1
+jne WFF_QueueNative
+cmp dword ptr [rsp+90],1
+jne WFF_QueueNative
+mov r11d,[WFF_NextCaptureID]
+lea r10,[WFF_CaptureAllowedIDs]
+mov ecx,108
+WFF_QueueLoop:
+cmp r11d,[r10]
+je WFF_QueueFound
+add r10,4
+dec ecx
+jne WFF_QueueLoop
+jmp WFF_QueueNative
+WFF_QueueFound:
+// 3 is a brief internal reservation. Publish 2 only after queue fields are ready.
+mov eax,1
+mov ecx,3
+lock cmpxchg [WFF_NextCaptureArmed],ecx
+jne WFF_QueueNative
+mov [WFF_PendingCaptureID],r11d
+mov [WFF_LastCaptureSourceID],r8d
+mov dword ptr [WFF_LastCaptureSelectedID],0
+mov dword ptr [WFF_NextCaptureArmed],2
+WFF_QueueNative:
+pop r11
+pop r10
+pop rcx
+pop rax
+popfq
+jmp WFF_CloneArgsHook+8
+
+WFF_GrantCode:
+pushfq
+push rax
+push rcx
+push r10
+push r11
+cmp dword ptr [WFF_NextCaptureArmed],2
+jne WFF_GrantNative
+// Confirmed by the TraceMu capture: other awards/party reconstruction bypass.
+mov r10,WOFF.exe+734FC7
+cmp [rsp+28],r10
+jne WFF_GrantNative
+mov r10,[WOFF.exe+3439EC0]
+lea r10,[r10+D0]
+cmp rcx,r10
+jne WFF_GrantNative
+cmp edx,[WFF_LastCaptureSourceID]
+jne WFF_GrantNative
+mov r11d,[WFF_PendingCaptureID]
+test r11d,r11d
+jz WFF_GrantNative
+mov eax,2
+mov ecx,3
+lock cmpxchg [WFF_NextCaptureArmed],ecx
+jne WFF_GrantNative
+// Native free-slot allocation and species/board/stats construction stay intact.
+mov edx,r11d
+xor r8d,r8d
+mov [WFF_LastCaptureSelectedID],r11d
+mov dword ptr [WFF_PendingCaptureID],0
+mov dword ptr [WFF_NextCaptureArmed],0
+WFF_GrantNative:
+pop r11
+pop r10
+pop rcx
+pop rax
+popfq
+mov [rsp+8],rbx
+jmp WFF_OwnedGrant+5
+
+align 10
+WFF_NextCaptureID:
+dd 0
+WFF_NextCaptureArmed:
+dd 0
+WFF_LastCaptureSourceID:
+dd 0
+WFF_LastCaptureSelectedID:
+dd 0
+WFF_PendingCaptureID:
+dd 0
+WFF_CaptureAllowedIDs:
+dd BC1 1B58 1B59 1B5A 1B5B 1B5C 1B5D 1B5E 1B5F 1B60 1B61 1B62
+dd 1B63 1B64 1B65 1B66 1B67 1B68 1B69 1B6A 1B6B 1B6C 1B6D 1B6E
+dd 1B6F 1B70 1B71 1B72 1B73 1B74 1B75 1B76 1B77 1B78 1B79 1B7A
+dd 1B7B 1B7C 1B7D 1B7E 1B7F 1B80 1B81 1B82 1B83 1B84 1B85 1B86
+dd 1B87 1B88 1B89 1B8A 1B8B 1B8C 1B8D 1B8E 1B8F 1B90 1B91 1B92
+dd 1B93 1B94 1B95 1B96 1B97 1B98 1B99 1B9A 1B9B 1B9C 1B9D 1B9E
+dd 1B9F 1BA0 1BA1 1BA2 1BA3 1BA4 1BA5 1BA6 1BA7 1BA8 1BA9 1BAA
+dd 1BAB 1BAC 1BAD 1BAE 1BAF 1BB0 1BB1 1BB2 1BB3 1BB4 1BB5 1BB6
+dd 1BB7 1BB8 1BB9 1BBA 1BBB 1BBC 1BBD 1BBE 1BBF 1BC0 1BC1 1BC2
+dd 1BC3 1BC4 1BC5 1BC6 1BC7 1BC8 1BC9 1BCA 1BCB 1BCC 1BCD 1BCE
+dd 1BCF 1BD0 1BD1 1BD2 1BD3 1BD4 1BD5 1BD6 1BD7 1BD8 1BD9 1BDA
+dd 1BDB 1BDC 1BDD 1BDE 1BDF 1BE0 1BE1 1BE2 1BE3 1BE4 1BE5 1BE6
+dd 1BE7 1BE8 1BE9 1BEA 1BEB 1BEC 1BED 1BEE 1BEF 1BF0 1BF1 1BF2
+dd 1BF3 1BF4 1BF5 1BF6 1BF7 1BF8 1BF9 1BFA 1BFB 1BFC 1BFD 1BFE
+dd 1BFF 1C00 1C01 1C02 1C03 1C04 1C05 1C06 1C07 1C08 1C09 1C0A
+dd 1C0B 1C0C 1C0D 1C0E 1C0F 1C10 1C11 1C12 1C13 1C14 1C15 1C16
+dd 1C17 1C18 1C19 1C1A 1C1B 1C1C 1C1D 1C1E 1C1F 1C20 1C21 1C22
+dd 1C23 1C24 1C25 1C26 1C27 1C28 1C29 1C2A 1C2B 1C2C 1C2D 1C2E
+dd 1C2F 1C30 1C31 1C32 1C33 1C34 1C35 1C36 1F40 1F41 1F42 1F43
+dd 1F44 1F45 1F46 1F47 1F48 1F49 1F4A 1F4B 1F4C 1F4D 1F4E 1F4F
+dd 1F50 1F51 1F52 1F53 1F54 1F55 1F56 1F57 1F58 1F59 1F5A 1F5B
+dd 1F5C 1F5D 1F5E 1F5F 1F60 1F61 1F62 1F63 1F64 1F65 1F66 1F67
+
+WFF_CloneArgsHook:
+jmp WFF_ReplacementCode
+nop 3
+WFF_OwnedGrant:
+jmp WFF_GrantCode
+[DISABLE]
+WFF_CloneArgsHook:
+db 44 8B C0 48 8D 54 24 58
+WFF_OwnedGrant:
+db 48 89 5C 24 08
+unregistersymbol(WFF_CloneArgsHook)
+unregistersymbol(WFF_OwnedGrant)
+unregistersymbol(WFF_NextCaptureID)
+unregistersymbol(WFF_NextCaptureArmed)
+unregistersymbol(WFF_LastCaptureSourceID)
+unregistersymbol(WFF_LastCaptureSelectedID)
+dealloc(WFF_ReplacementCode)
+</AssemblerScript>
+          <Options moDeactivateChildrenAsWell="1" />
+          <CheatEntries>
+            <CheatEntry>
+              <ID>81</ID>
+              <Description>"1. Select replacement Mirage [Unusual entries marked; ownership unverified]"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>WFF_NextCaptureID</Address>
+              <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:Select a Mirage first — no replacement
+8009:2P Serafie — AddMonster010, ID 1F49
+8008:2P Tama — AddMonster009, ID 1F48
+7085:Adamantoise — Monster019_03, ID 1BAD
+7086:Addy the Adamantoise — Monster019_04, ID 1BAE [OUTSIDE LIBRARY / EXPERIMENTAL]
+7005:Affrite — Monster002_02, ID 1B5D
+7136:Ahriman — Monster038_03, ID 1BE0
+7091:Asterius — Monster020_12, ID 1BB3
+7180:Astraea — Monster051_14, ID 1C0C
+7011:Bablizz — Monster003_01, ID 1B63
+8030:Bablizz — AddMonster031, ID 1F5E [TEST / EXPERIMENTAL]
+7062:Baby Paleberry — Monster012_11, ID 1B96
+7059:Baby Tonberry — Monster012_01, ID 1B93
+7042:Babyhemoth — Monster008_01, ID 1B82
+7134:Bahamut — Monster037_04, ID 1BDE [OUTSIDE LIBRARY / EXPERIMENTAL]
+7194:Bahamutian Commander — Monster070_02, ID 1C1A
+7193:Bahamutian Soldier — Monster070_01, ID 1C19
+7214:Bahamut★ — Monster037_04_n01, ID 1C2E
+7044:Behemonster — Monster008_04, ID 1B84
+7043:Behemoth — Monster008_03, ID 1B83
+7142:Bihydra — Monster039_11, ID 1BE6
+7056:Bismarck — Monster011_03, ID 1B90
+7034:Black Chocochick — Monster006_11, ID 1B7A
+7192:Black Mage — Monster061_01, ID 1C18
+7039:Black Nakk — Monster007_11, ID 1B7F
+7137:Blood Eye — Monster038_11, ID 1BE1
+7206:Boko — Monster006_32, ID 1C26
+7109:Bomb — Monster031_02, ID 1BC5
+7111:Bombino — Monster031_12, ID 1BC7
+7088:Brothertaur — Monster020_01, ID 1BB0
+7015:Brrblizz — Monster003_11, ID 1B67
+7138:Buer — Monster038_13, ID 1BE2
+7185:Cactrot — Monster053_11, ID 1C11
+7183:Cactuar — Monster053_01, ID 1C0F
+8000:Cactuar Johnny — AddMonster001, ID 1F40
+7075:Carbuncle — Monster017_03, ID 1BA3
+7160:Cenchos — Monster044_13, ID 1BF8
+7038:Cerberus — Monster007_04, ID 1B7E
+7032:Chocobo — Monster006_02, ID 1B78
+7031:Chocochick — Monster006_01, ID 1B77
+7204:Chocochick★ — Monster006_21, ID 1C24 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7072:Chrome Giant — Monster016_13, ID 1BA0
+7131:Cocadrille — Monster036_11, ID 1BDB
+7128:Cockatrice — Monster036_01, ID 1BD8
+8021:Coeurl — AddMonster022, ID 1F55
+7068:Copper Gnome — Monster016_01, ID 1B9C
+8006:Crimson Armor — AddMonster007, ID 1F46
+8023:Daigoro — AddMonster024, ID 1F57
+8004:Dark Behemoth — AddMonster005, ID 1F44
+7173:Death Machine — Monster051_03, ID 1C05
+7200:Death Searcher — Monster051_27, ID 1C20
+7065:Deathskull — Monster013_01, ID 1B99
+7099:Demivampire — Monster023_12, ID 1BBB
+8016:Devil Wolf — AddMonster017, ID 1F50
+7154:Diabolos — Monster042_03, ID 1BF2
+7216:Diabolos★ — Monster042_03_n01, ID 1C30
+7152:Diva Serafie — Monster041_13, ID 1BF0
+8014:Dramut — AddMonster015, ID 1F4E
+7139:Dualizard — Monster039_01, ID 1BE3
+7174:Einhänder — Monster051_04, ID 1C06
+7081:Elasmos — Monster018_13, ID 1BA9
+7040:Elefenrir — Monster007_13, ID 1B80
+7199:Elite Entom — Monster040_21, ID 1C1F
+7168:Enkidu — Monster049_01, ID 1C00 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7145:Entom Guard — Monster040_01, ID 1BE9
+7147:Entom Soldier — Monster040_11, ID 1BEB
+7195:Federation Guard — Monster070_03, ID 1C1B
+7037:Fenrir — Monster007_03, ID 1B7D
+7087:Flammantoise — Monster019_11, ID 1BAF
+7112:Flan — Monster032_02, ID 1BC8
+7114:Flan Princess — Monster032_05, ID 1BCA
+7135:Floating Eye — Monster038_01, ID 1BDF
+7004:Fritt — Monster002_01, ID 1B5C
+8029:Fritt — AddMonster030, ID 1F5D [TEST / EXPERIMENTAL]
+8024:Gamit — AddMonster025, ID 1F58
+7155:Garchimacera — Monster042_11, ID 1BF3
+8028:Garland — AddMonster029, ID 1F5C
+7143:Ghidra — Monster039_12, ID 1BE7
+7027:Giant Goblin — Monster005_03, ID 1B73
+7186:Gigantrot — Monster053_12, ID 1C12
+7184:Gigantuar — Monster053_02, ID 1C10
+7169:Gilgamesh — Monster049_02, ID 1C01
+7009:Gleed — Monster002_12, ID 1B61
+7010:Gleefrit — Monster002_13, ID 1B62
+7052:Glow Moogle — Monster010_11, ID 1B8C
+7025:Goblin — Monster005_01, ID 1B71
+7026:Goblin Guard — Monster005_02, ID 1B72
+7113:Golden Flan — Monster032_04, ID 1BC9
+7197:Golem Head — Monster016_21, ID 1C1D
+7041:Grandfenrir — Monster007_23, ID 1B81
+7164:Holy Dragon — Monster046_03, ID 1BFC
+7035:Hyperion — Monster006_12, ID 1B7B
+7098:Ice Bat — Monster023_11, ID 1BBA
+7007:Ifreeta — Monster002_05, ID 1B5F
+7208:Ifreeta★ — Monster002_35, ID 1C28
+7006:Ifrit — Monster002_03, ID 1B5E
+7207:Ifrit★ — Monster002_23, ID 1C27
+7153:Imp — Monster042_01, ID 1BF1
+7133:Iris — Monster036_13, ID 1BDD
+7070:Iron Giant — Monster016_04, ID 1B9E
+7189:Iron Muscles — Monster055_11, ID 1C15
+7022:Joult — Monster004_11, ID 1B6E
+7116:Kaguya Flan — Monster032_15, ID 1BCC
+7110:King Bomb — Monster031_04, ID 1BC6
+8003:Kobold Mimic — AddMonster004, ID 1F43
+7119:Korrigan — Monster033_11, ID 1BCF
+7157:Kraken — Monster044_03, ID 1BF5
+7053:Kupicaroon — Monster010_12, ID 1B8D
+7051:Kupirate — Monster010_02, ID 1B8B
+7046:Kuza Beast — Monster008_13, ID 1B86
+7045:Kuza Kit — Monster008_11, ID 1B85
+7001:Kyubi — Monster001_02, ID 1B59
+8019:Largebuncle — AddMonster020, ID 1F53
+7071:Lead Gnome — Monster016_11, ID 1B9F
+7108:Left Claw — Monster027_11, ID 1BC4
+8020:Lesser Coeurl — AddMonster021, ID 1F54
+7082:Leviathan — Monster018_05, ID 1BAA
+7213:Leviathan★ — Monster018_05_n01, ID 1C2D
+8018:Lich — AddMonster019, ID 1F52
+7093:Lucky Toad — Monster021_02, ID 1BB5
+7188:Maduin — Monster055_04, ID 1C14
+7104:Magic Jar — Monster024_12, ID 1BC0
+7101:Magic Pot — Monster024_02, ID 1BBD
+7171:Magitek Armor — Monster051_01, ID 1C03
+7178:Magitek Armor A — Monster051_11, ID 1C0A
+7172:Magitek Armor B — Monster051_02, ID 1C04
+8007:Magitek Armor P — AddMonster008, ID 1F47
+7181:Magna Roader — Monster052_01, ID 1C0D
+7182:Magna Roader — Monster052_11, ID 1C0E
+7198:Magna Roader — Monster052_21, ID 1C1E
+7118:Malboro — Monster033_03, ID 1BCE
+7120:Malboro Menace — Monster033_13, ID 1BD0
+7117:Mandragora — Monster033_01, ID 1BCD
+7121:Manticore — Monster034_01, ID 1BD1
+8017:Marilith — AddMonster018, ID 1F51
+7202:Master Cactuar — Monster053_21, ID 1C22
+7201:Master Moogle — Monster010_21, ID 1C21
+7203:Master Tonberry — Monster012_22, ID 1C23
+8011:Mecha Choco — AddMonster012, ID 1F4B
+7033:Mecha Chocobo — Monster006_05, ID 1B79
+7205:Mecha Chocobo★ — Monster006_45, ID 1C25
+7058:Mega Nightsqual — Monster011_12, ID 1B92
+7162:Mega Red Dragon — Monster045_03, ID 1BFA
+7055:Mega Sharqual — Monster011_02, ID 1B8F
+8012:Mel — AddMonster013, ID 1F4C
+7124:Memecoleous — Monster034_13, ID 1BD4
+7196:Metalliskull — Monster013_21, ID 1C1C
+7100:Mimic — Monster024_01, ID 1BBC
+7103:Mimic Jackpot — Monster024_11, ID 1BBF
+7102:Mimic Queen — Monster024_03, ID 1BBE
+7156:Mindflayer — Monster044_01, ID 1BF4
+7218:Miney — Monster009_01_n01, ID 1C32
+7115:Mini Flan — Monster032_12, ID 1BCB
+7166:Mini Golem — Monster016_02, ID 1BFE
+7084:Minimantoise — Monster019_01, ID 1BAC
+7089:Minotaur — Monster020_02, ID 1BB1
+7012:Mishiva — Monster003_02, ID 1B64
+7163:Mist Dragon — Monster046_02, ID 1BFB
+7219:Mo — Monster009_01_n02, ID 1C33
+7050:Moogle — Monster010_01, ID 1B8A
+8022:Moomba — AddMonster023, ID 1F56
+7067:Mordskull — Monster013_11, ID 1B9B
+7073:Mu — Monster017_01, ID 1BA1
+7069:Mythril Giant — Monster016_03, ID 1B9D
+7144:Nidhogg — Monster039_13, ID 1BE8
+7127:Nightmare — Monster035_12, ID 1BD7
+7057:Nightsqual — Monster011_11, ID 1B91
+7132:Nirvalefor — Monster036_12, ID 1BDC
+8010:NOT USED — AddMonster011, ID 1F4A [UNUSED / EXPERIMENTAL]
+8033:NOT USED — AddMonster034, ID 1F61 [UNUSED / EXPERIMENTAL]
+8034:NOT USED — AddMonster035, ID 1F62 [UNUSED / EXPERIMENTAL]
+8035:NOT USED — AddMonster036, ID 1F63 [UNUSED / EXPERIMENTAL]
+8036:NOT USED — AddMonster037, ID 1F64 [UNUSED / EXPERIMENTAL]
+8037:NOT USED — AddMonster038, ID 1F65 [UNUSED / EXPERIMENTAL]
+8038:NOT USED — AddMonster039, ID 1F66 [UNUSED / EXPERIMENTAL]
+8039:NOT USED — AddMonster040, ID 1F67 [UNUSED / EXPERIMENTAL]
+7077:Nut Eater — Monster017_12, ID 1BA5
+7126:Odin — Monster035_04, ID 1BD6
+7215:Odin★ — Monster035_04_n01, ID 1C2F
+7146:Omega — Monster040_03, ID 1BEA
+7148:Omega Bane — Monster040_13, ID 1BEC
+7175:Omega God — Monster051_05, ID 1C07
+7063:Paleberry — Monster012_12, ID 1B97
+7064:Paleberry King — Monster012_13, ID 1B98
+7130:Phoenix — Monster036_03, ID 1BDA
+8013:Ponini — AddMonster014, ID 1F4D
+7028:Princess Goblin — Monster005_04, ID 1B74
+7220:Princess Goblin★ — Monster005_04_n01, ID 1C34
+7049:Quachacho — Monster009_11, ID 1B89
+7047:Quacho — Monster009_01, ID 1B87
+7048:Quacho Queen — Monster009_02, ID 1B88
+7217:Quacho Queen★ — Monster009_02_n01, ID 1C31
+7024:Rairamuh — Monster004_13, ID 1B70
+7021:Ramewl — Monster004_05, ID 1B6D
+7212:Ramewl★ — Monster004_05_n01, ID 1C2C
+7020:Ramuh — Monster004_03, ID 1B6C
+7211:Ramuh★ — Monster004_03_n01, ID 1C2B
+7076:Reaver Mu — Monster017_11, ID 1BA4
+8002:Red Bonnetberry — AddMonster003, ID 1F42
+7029:Red Cap — Monster005_11, ID 1B75
+7030:Red Captain — Monster005_12, ID 1B76
+7161:Red Dragon — Monster045_02, ID 1BF9
+7107:Right Claw — Monster027_01, ID 1BC3
+7105:Sand Worm — Monster025_02, ID 1BC1
+7123:Sandicore — Monster034_11, ID 1BD3
+7083:Sea Serpent — Monster018_11, ID 1BAB
+7079:Sea Snake — Monster018_01, ID 1BA7
+7106:Sea Worm — Monster025_12, ID 1BC2
+7170:Searcher — Monster051_07, ID 1C02
+7177:Security Eye — Monster051_17, ID 1C09
+7149:Serafie — Monster041_01, ID 1BED
+7054:Sharqual — Monster011_01, ID 1B8E
+7013:Shiva — Monster003_03, ID 1B65
+3009:Shiva-Ixion — Chara011, ID 0BC1
+7014:Shivalry — Monster003_05, ID 1B66
+7210:Shivalry★ — Monster003_05_n01, ID 1C2A
+7209:Shiva★ — Monster003_03_n01, ID 1C29
+7017:Shivver — Monster003_13, ID 1B69
+7016:Shivverina — Monster003_12, ID 1B68
+7150:Siren — Monster041_03, ID 1BEE
+7090:Sistertaur — Monster020_11, ID 1BB2
+7074:Skull Eater — Monster017_02, ID 1BA2
+8005:Sky Dragon — AddMonster006, ID 1F45
+7165:Spark Dragon — Monster046_12, ID 1BFD
+7122:Sphinx — Monster034_03, ID 1BD2
+7159:Squidraken — Monster044_11, ID 1BF7
+7191:Supraltima Weapon — Monster056_12, ID 1C17
+7080:Syldra — Monster018_03, ID 1BA8
+8026:Syldra★ — AddMonster027, ID 1F5A
+7151:Sylph — Monster041_11, ID 1BEF
+8015:Sylphine — AddMonster016, ID 1F4F
+7000:Tama — Monster001_01, ID 1B58
+7003:Tamamohimé — Monster001_12, ID 1B5B
+8025:The Immortal Dark Dragon — AddMonster026, ID 1F59 [OUTSIDE LIBRARY / EXPERIMENTAL]
+8032:The Immortal Dark Dragon — AddMonster033, ID 1F60 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7141:Tiamat — Monster039_03, ID 1BE5
+7187:Titan — Monster055_01, ID 1C13
+7060:Tonberry — Monster012_02, ID 1B94
+7061:Tonberry King — Monster012_03, ID 1B95
+7078:Topaz Carbuncle — Monster017_13, ID 1BA6
+7140:Trihyde — Monster039_02, ID 1BE4
+7190:Ultima Weapon — Monster056_02, ID 1C16
+7158:Ultros — Monster044_04, ID 1BF6
+7221:Ultros★ — Monster044_04_n01, ID 1C35
+7066:Undead Princess — Monster013_04, ID 1B9A
+7222:Undead Princess★ — Monster013_04_n01, ID 1C36
+7125:Unicorn — Monster035_02, ID 1BD5
+7129:Valefor — Monster036_02, ID 1BD9
+7096:Vampire — Monster023_02, ID 1BB8
+7097:Vampire Prime — Monster023_04, ID 1BB9
+7023:Voultr — Monster004_12, ID 1B6F
+7179:War Machine — Monster051_13, ID 1C0B
+7167:Water Golem — Monster016_12, ID 1BFF
+7092:Water Toad — Monster021_01, ID 1BB4
+7008:Weeglee — Monster002_11, ID 1B60
+7095:Werebat — Monster023_01, ID 1BB7
+8001:White Chocobo — AddMonster002, ID 1F41
+7036:White Nakk — Monster007_01, ID 1B7C
+7094:Wind Toad — Monster021_11, ID 1BB6
+7176:XG — Monster051_06, ID 1C08
+8027:Yojimbo — AddMonster028, ID 1F5B
+7002:Yurugu — Monster001_11, ID 1B5A
+7019:Zaphr — Monster004_02, ID 1B6B
+7018:Zapt — Monster004_01, ID 1B6A
+8031:Zapt — AddMonster032, ID 1F5F [TEST / EXPERIMENTAL]</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>82</ID>
+              <Description>"2. Arm ONE [Replacement appears in Mirage list AFTER battle; off/on to re-arm]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+local id=readInteger('WFF_NextCaptureID')
+if not id or id==0 then error('Choose a Mirage in the dropdown before arming replacement.') end
+{$asm}
+WFF_NextCaptureArmed:
+dd 1
+[DISABLE]
+WFF_NextCaptureArmed:
+dd 0
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>83</ID>
+              <Description>"INFO ONLY - Arm status [Read-only]"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>WFF_NextCaptureArmed</Address>
+              <Color>808080</Color>
+              <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:Idle / consumed
+1:Armed for one capture
+2:Capture queued — finish battle
+3:Processing</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>84</ID>
+              <Description>"INFO ONLY - Last original species [Read-only]"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>WFF_LastCaptureSourceID</Address>
+              <Color>808080</Color>
+              <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:No replacement recorded
+8009:2P Serafie — AddMonster010, ID 1F49
+8008:2P Tama — AddMonster009, ID 1F48
+7085:Adamantoise — Monster019_03, ID 1BAD
+7086:Addy the Adamantoise — Monster019_04, ID 1BAE [OUTSIDE LIBRARY / EXPERIMENTAL]
+7005:Affrite — Monster002_02, ID 1B5D
+7136:Ahriman — Monster038_03, ID 1BE0
+7091:Asterius — Monster020_12, ID 1BB3
+7180:Astraea — Monster051_14, ID 1C0C
+7011:Bablizz — Monster003_01, ID 1B63
+8030:Bablizz — AddMonster031, ID 1F5E [TEST / EXPERIMENTAL]
+7062:Baby Paleberry — Monster012_11, ID 1B96
+7059:Baby Tonberry — Monster012_01, ID 1B93
+7042:Babyhemoth — Monster008_01, ID 1B82
+7134:Bahamut — Monster037_04, ID 1BDE [OUTSIDE LIBRARY / EXPERIMENTAL]
+7194:Bahamutian Commander — Monster070_02, ID 1C1A
+7193:Bahamutian Soldier — Monster070_01, ID 1C19
+7214:Bahamut★ — Monster037_04_n01, ID 1C2E
+7044:Behemonster — Monster008_04, ID 1B84
+7043:Behemoth — Monster008_03, ID 1B83
+7142:Bihydra — Monster039_11, ID 1BE6
+7056:Bismarck — Monster011_03, ID 1B90
+7034:Black Chocochick — Monster006_11, ID 1B7A
+7192:Black Mage — Monster061_01, ID 1C18
+7039:Black Nakk — Monster007_11, ID 1B7F
+7137:Blood Eye — Monster038_11, ID 1BE1
+7206:Boko — Monster006_32, ID 1C26
+7109:Bomb — Monster031_02, ID 1BC5
+7111:Bombino — Monster031_12, ID 1BC7
+7088:Brothertaur — Monster020_01, ID 1BB0
+7015:Brrblizz — Monster003_11, ID 1B67
+7138:Buer — Monster038_13, ID 1BE2
+7185:Cactrot — Monster053_11, ID 1C11
+7183:Cactuar — Monster053_01, ID 1C0F
+8000:Cactuar Johnny — AddMonster001, ID 1F40
+7075:Carbuncle — Monster017_03, ID 1BA3
+7160:Cenchos — Monster044_13, ID 1BF8
+7038:Cerberus — Monster007_04, ID 1B7E
+7032:Chocobo — Monster006_02, ID 1B78
+7031:Chocochick — Monster006_01, ID 1B77
+7204:Chocochick★ — Monster006_21, ID 1C24 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7072:Chrome Giant — Monster016_13, ID 1BA0
+7131:Cocadrille — Monster036_11, ID 1BDB
+7128:Cockatrice — Monster036_01, ID 1BD8
+8021:Coeurl — AddMonster022, ID 1F55
+7068:Copper Gnome — Monster016_01, ID 1B9C
+8006:Crimson Armor — AddMonster007, ID 1F46
+8023:Daigoro — AddMonster024, ID 1F57
+8004:Dark Behemoth — AddMonster005, ID 1F44
+7173:Death Machine — Monster051_03, ID 1C05
+7200:Death Searcher — Monster051_27, ID 1C20
+7065:Deathskull — Monster013_01, ID 1B99
+7099:Demivampire — Monster023_12, ID 1BBB
+8016:Devil Wolf — AddMonster017, ID 1F50
+7154:Diabolos — Monster042_03, ID 1BF2
+7216:Diabolos★ — Monster042_03_n01, ID 1C30
+7152:Diva Serafie — Monster041_13, ID 1BF0
+8014:Dramut — AddMonster015, ID 1F4E
+7139:Dualizard — Monster039_01, ID 1BE3
+7174:Einhänder — Monster051_04, ID 1C06
+7081:Elasmos — Monster018_13, ID 1BA9
+7040:Elefenrir — Monster007_13, ID 1B80
+7199:Elite Entom — Monster040_21, ID 1C1F
+7168:Enkidu — Monster049_01, ID 1C00 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7145:Entom Guard — Monster040_01, ID 1BE9
+7147:Entom Soldier — Monster040_11, ID 1BEB
+7195:Federation Guard — Monster070_03, ID 1C1B
+7037:Fenrir — Monster007_03, ID 1B7D
+7087:Flammantoise — Monster019_11, ID 1BAF
+7112:Flan — Monster032_02, ID 1BC8
+7114:Flan Princess — Monster032_05, ID 1BCA
+7135:Floating Eye — Monster038_01, ID 1BDF
+7004:Fritt — Monster002_01, ID 1B5C
+8029:Fritt — AddMonster030, ID 1F5D [TEST / EXPERIMENTAL]
+8024:Gamit — AddMonster025, ID 1F58
+7155:Garchimacera — Monster042_11, ID 1BF3
+8028:Garland — AddMonster029, ID 1F5C
+7143:Ghidra — Monster039_12, ID 1BE7
+7027:Giant Goblin — Monster005_03, ID 1B73
+7186:Gigantrot — Monster053_12, ID 1C12
+7184:Gigantuar — Monster053_02, ID 1C10
+7169:Gilgamesh — Monster049_02, ID 1C01
+7009:Gleed — Monster002_12, ID 1B61
+7010:Gleefrit — Monster002_13, ID 1B62
+7052:Glow Moogle — Monster010_11, ID 1B8C
+7025:Goblin — Monster005_01, ID 1B71
+7026:Goblin Guard — Monster005_02, ID 1B72
+7113:Golden Flan — Monster032_04, ID 1BC9
+7197:Golem Head — Monster016_21, ID 1C1D
+7041:Grandfenrir — Monster007_23, ID 1B81
+7164:Holy Dragon — Monster046_03, ID 1BFC
+7035:Hyperion — Monster006_12, ID 1B7B
+7098:Ice Bat — Monster023_11, ID 1BBA
+7007:Ifreeta — Monster002_05, ID 1B5F
+7208:Ifreeta★ — Monster002_35, ID 1C28
+7006:Ifrit — Monster002_03, ID 1B5E
+7207:Ifrit★ — Monster002_23, ID 1C27
+7153:Imp — Monster042_01, ID 1BF1
+7133:Iris — Monster036_13, ID 1BDD
+7070:Iron Giant — Monster016_04, ID 1B9E
+7189:Iron Muscles — Monster055_11, ID 1C15
+7022:Joult — Monster004_11, ID 1B6E
+7116:Kaguya Flan — Monster032_15, ID 1BCC
+7110:King Bomb — Monster031_04, ID 1BC6
+8003:Kobold Mimic — AddMonster004, ID 1F43
+7119:Korrigan — Monster033_11, ID 1BCF
+7157:Kraken — Monster044_03, ID 1BF5
+7053:Kupicaroon — Monster010_12, ID 1B8D
+7051:Kupirate — Monster010_02, ID 1B8B
+7046:Kuza Beast — Monster008_13, ID 1B86
+7045:Kuza Kit — Monster008_11, ID 1B85
+7001:Kyubi — Monster001_02, ID 1B59
+8019:Largebuncle — AddMonster020, ID 1F53
+7071:Lead Gnome — Monster016_11, ID 1B9F
+7108:Left Claw — Monster027_11, ID 1BC4
+8020:Lesser Coeurl — AddMonster021, ID 1F54
+7082:Leviathan — Monster018_05, ID 1BAA
+7213:Leviathan★ — Monster018_05_n01, ID 1C2D
+8018:Lich — AddMonster019, ID 1F52
+7093:Lucky Toad — Monster021_02, ID 1BB5
+7188:Maduin — Monster055_04, ID 1C14
+7104:Magic Jar — Monster024_12, ID 1BC0
+7101:Magic Pot — Monster024_02, ID 1BBD
+7171:Magitek Armor — Monster051_01, ID 1C03
+7178:Magitek Armor A — Monster051_11, ID 1C0A
+7172:Magitek Armor B — Monster051_02, ID 1C04
+8007:Magitek Armor P — AddMonster008, ID 1F47
+7181:Magna Roader — Monster052_01, ID 1C0D
+7182:Magna Roader — Monster052_11, ID 1C0E
+7198:Magna Roader — Monster052_21, ID 1C1E
+7118:Malboro — Monster033_03, ID 1BCE
+7120:Malboro Menace — Monster033_13, ID 1BD0
+7117:Mandragora — Monster033_01, ID 1BCD
+7121:Manticore — Monster034_01, ID 1BD1
+8017:Marilith — AddMonster018, ID 1F51
+7202:Master Cactuar — Monster053_21, ID 1C22
+7201:Master Moogle — Monster010_21, ID 1C21
+7203:Master Tonberry — Monster012_22, ID 1C23
+8011:Mecha Choco — AddMonster012, ID 1F4B
+7033:Mecha Chocobo — Monster006_05, ID 1B79
+7205:Mecha Chocobo★ — Monster006_45, ID 1C25
+7058:Mega Nightsqual — Monster011_12, ID 1B92
+7162:Mega Red Dragon — Monster045_03, ID 1BFA
+7055:Mega Sharqual — Monster011_02, ID 1B8F
+8012:Mel — AddMonster013, ID 1F4C
+7124:Memecoleous — Monster034_13, ID 1BD4
+7196:Metalliskull — Monster013_21, ID 1C1C
+7100:Mimic — Monster024_01, ID 1BBC
+7103:Mimic Jackpot — Monster024_11, ID 1BBF
+7102:Mimic Queen — Monster024_03, ID 1BBE
+7156:Mindflayer — Monster044_01, ID 1BF4
+7218:Miney — Monster009_01_n01, ID 1C32
+7115:Mini Flan — Monster032_12, ID 1BCB
+7166:Mini Golem — Monster016_02, ID 1BFE
+7084:Minimantoise — Monster019_01, ID 1BAC
+7089:Minotaur — Monster020_02, ID 1BB1
+7012:Mishiva — Monster003_02, ID 1B64
+7163:Mist Dragon — Monster046_02, ID 1BFB
+7219:Mo — Monster009_01_n02, ID 1C33
+7050:Moogle — Monster010_01, ID 1B8A
+8022:Moomba — AddMonster023, ID 1F56
+7067:Mordskull — Monster013_11, ID 1B9B
+7073:Mu — Monster017_01, ID 1BA1
+7069:Mythril Giant — Monster016_03, ID 1B9D
+7144:Nidhogg — Monster039_13, ID 1BE8
+7127:Nightmare — Monster035_12, ID 1BD7
+7057:Nightsqual — Monster011_11, ID 1B91
+7132:Nirvalefor — Monster036_12, ID 1BDC
+8010:NOT USED — AddMonster011, ID 1F4A [UNUSED / EXPERIMENTAL]
+8033:NOT USED — AddMonster034, ID 1F61 [UNUSED / EXPERIMENTAL]
+8034:NOT USED — AddMonster035, ID 1F62 [UNUSED / EXPERIMENTAL]
+8035:NOT USED — AddMonster036, ID 1F63 [UNUSED / EXPERIMENTAL]
+8036:NOT USED — AddMonster037, ID 1F64 [UNUSED / EXPERIMENTAL]
+8037:NOT USED — AddMonster038, ID 1F65 [UNUSED / EXPERIMENTAL]
+8038:NOT USED — AddMonster039, ID 1F66 [UNUSED / EXPERIMENTAL]
+8039:NOT USED — AddMonster040, ID 1F67 [UNUSED / EXPERIMENTAL]
+7077:Nut Eater — Monster017_12, ID 1BA5
+7126:Odin — Monster035_04, ID 1BD6
+7215:Odin★ — Monster035_04_n01, ID 1C2F
+7146:Omega — Monster040_03, ID 1BEA
+7148:Omega Bane — Monster040_13, ID 1BEC
+7175:Omega God — Monster051_05, ID 1C07
+7063:Paleberry — Monster012_12, ID 1B97
+7064:Paleberry King — Monster012_13, ID 1B98
+7130:Phoenix — Monster036_03, ID 1BDA
+8013:Ponini — AddMonster014, ID 1F4D
+7028:Princess Goblin — Monster005_04, ID 1B74
+7220:Princess Goblin★ — Monster005_04_n01, ID 1C34
+7049:Quachacho — Monster009_11, ID 1B89
+7047:Quacho — Monster009_01, ID 1B87
+7048:Quacho Queen — Monster009_02, ID 1B88
+7217:Quacho Queen★ — Monster009_02_n01, ID 1C31
+7024:Rairamuh — Monster004_13, ID 1B70
+7021:Ramewl — Monster004_05, ID 1B6D
+7212:Ramewl★ — Monster004_05_n01, ID 1C2C
+7020:Ramuh — Monster004_03, ID 1B6C
+7211:Ramuh★ — Monster004_03_n01, ID 1C2B
+7076:Reaver Mu — Monster017_11, ID 1BA4
+8002:Red Bonnetberry — AddMonster003, ID 1F42
+7029:Red Cap — Monster005_11, ID 1B75
+7030:Red Captain — Monster005_12, ID 1B76
+7161:Red Dragon — Monster045_02, ID 1BF9
+7107:Right Claw — Monster027_01, ID 1BC3
+7105:Sand Worm — Monster025_02, ID 1BC1
+7123:Sandicore — Monster034_11, ID 1BD3
+7083:Sea Serpent — Monster018_11, ID 1BAB
+7079:Sea Snake — Monster018_01, ID 1BA7
+7106:Sea Worm — Monster025_12, ID 1BC2
+7170:Searcher — Monster051_07, ID 1C02
+7177:Security Eye — Monster051_17, ID 1C09
+7149:Serafie — Monster041_01, ID 1BED
+7054:Sharqual — Monster011_01, ID 1B8E
+7013:Shiva — Monster003_03, ID 1B65
+3009:Shiva-Ixion — Chara011, ID 0BC1
+7014:Shivalry — Monster003_05, ID 1B66
+7210:Shivalry★ — Monster003_05_n01, ID 1C2A
+7209:Shiva★ — Monster003_03_n01, ID 1C29
+7017:Shivver — Monster003_13, ID 1B69
+7016:Shivverina — Monster003_12, ID 1B68
+7150:Siren — Monster041_03, ID 1BEE
+7090:Sistertaur — Monster020_11, ID 1BB2
+7074:Skull Eater — Monster017_02, ID 1BA2
+8005:Sky Dragon — AddMonster006, ID 1F45
+7165:Spark Dragon — Monster046_12, ID 1BFD
+7122:Sphinx — Monster034_03, ID 1BD2
+7159:Squidraken — Monster044_11, ID 1BF7
+7191:Supraltima Weapon — Monster056_12, ID 1C17
+7080:Syldra — Monster018_03, ID 1BA8
+8026:Syldra★ — AddMonster027, ID 1F5A
+7151:Sylph — Monster041_11, ID 1BEF
+8015:Sylphine — AddMonster016, ID 1F4F
+7000:Tama — Monster001_01, ID 1B58
+7003:Tamamohimé — Monster001_12, ID 1B5B
+8025:The Immortal Dark Dragon — AddMonster026, ID 1F59 [OUTSIDE LIBRARY / EXPERIMENTAL]
+8032:The Immortal Dark Dragon — AddMonster033, ID 1F60 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7141:Tiamat — Monster039_03, ID 1BE5
+7187:Titan — Monster055_01, ID 1C13
+7060:Tonberry — Monster012_02, ID 1B94
+7061:Tonberry King — Monster012_03, ID 1B95
+7078:Topaz Carbuncle — Monster017_13, ID 1BA6
+7140:Trihyde — Monster039_02, ID 1BE4
+7190:Ultima Weapon — Monster056_02, ID 1C16
+7158:Ultros — Monster044_04, ID 1BF6
+7221:Ultros★ — Monster044_04_n01, ID 1C35
+7066:Undead Princess — Monster013_04, ID 1B9A
+7222:Undead Princess★ — Monster013_04_n01, ID 1C36
+7125:Unicorn — Monster035_02, ID 1BD5
+7129:Valefor — Monster036_02, ID 1BD9
+7096:Vampire — Monster023_02, ID 1BB8
+7097:Vampire Prime — Monster023_04, ID 1BB9
+7023:Voultr — Monster004_12, ID 1B6F
+7179:War Machine — Monster051_13, ID 1C0B
+7167:Water Golem — Monster016_12, ID 1BFF
+7092:Water Toad — Monster021_01, ID 1BB4
+7008:Weeglee — Monster002_11, ID 1B60
+7095:Werebat — Monster023_01, ID 1BB7
+8001:White Chocobo — AddMonster002, ID 1F41
+7036:White Nakk — Monster007_01, ID 1B7C
+7094:Wind Toad — Monster021_11, ID 1BB6
+7176:XG — Monster051_06, ID 1C08
+8027:Yojimbo — AddMonster028, ID 1F5B
+7002:Yurugu — Monster001_11, ID 1B5A
+7019:Zaphr — Monster004_02, ID 1B6B
+7018:Zapt — Monster004_01, ID 1B6A
+8031:Zapt — AddMonster032, ID 1F5F [TEST / EXPERIMENTAL]</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>85</ID>
+              <Description>"INFO ONLY - Last replacement species [Read-only; verify in Mirage list]"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>WFF_LastCaptureSelectedID</Address>
+              <Color>808080</Color>
+              <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:No replacement recorded
+8009:2P Serafie — AddMonster010, ID 1F49
+8008:2P Tama — AddMonster009, ID 1F48
+7085:Adamantoise — Monster019_03, ID 1BAD
+7086:Addy the Adamantoise — Monster019_04, ID 1BAE [OUTSIDE LIBRARY / EXPERIMENTAL]
+7005:Affrite — Monster002_02, ID 1B5D
+7136:Ahriman — Monster038_03, ID 1BE0
+7091:Asterius — Monster020_12, ID 1BB3
+7180:Astraea — Monster051_14, ID 1C0C
+7011:Bablizz — Monster003_01, ID 1B63
+8030:Bablizz — AddMonster031, ID 1F5E [TEST / EXPERIMENTAL]
+7062:Baby Paleberry — Monster012_11, ID 1B96
+7059:Baby Tonberry — Monster012_01, ID 1B93
+7042:Babyhemoth — Monster008_01, ID 1B82
+7134:Bahamut — Monster037_04, ID 1BDE [OUTSIDE LIBRARY / EXPERIMENTAL]
+7194:Bahamutian Commander — Monster070_02, ID 1C1A
+7193:Bahamutian Soldier — Monster070_01, ID 1C19
+7214:Bahamut★ — Monster037_04_n01, ID 1C2E
+7044:Behemonster — Monster008_04, ID 1B84
+7043:Behemoth — Monster008_03, ID 1B83
+7142:Bihydra — Monster039_11, ID 1BE6
+7056:Bismarck — Monster011_03, ID 1B90
+7034:Black Chocochick — Monster006_11, ID 1B7A
+7192:Black Mage — Monster061_01, ID 1C18
+7039:Black Nakk — Monster007_11, ID 1B7F
+7137:Blood Eye — Monster038_11, ID 1BE1
+7206:Boko — Monster006_32, ID 1C26
+7109:Bomb — Monster031_02, ID 1BC5
+7111:Bombino — Monster031_12, ID 1BC7
+7088:Brothertaur — Monster020_01, ID 1BB0
+7015:Brrblizz — Monster003_11, ID 1B67
+7138:Buer — Monster038_13, ID 1BE2
+7185:Cactrot — Monster053_11, ID 1C11
+7183:Cactuar — Monster053_01, ID 1C0F
+8000:Cactuar Johnny — AddMonster001, ID 1F40
+7075:Carbuncle — Monster017_03, ID 1BA3
+7160:Cenchos — Monster044_13, ID 1BF8
+7038:Cerberus — Monster007_04, ID 1B7E
+7032:Chocobo — Monster006_02, ID 1B78
+7031:Chocochick — Monster006_01, ID 1B77
+7204:Chocochick★ — Monster006_21, ID 1C24 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7072:Chrome Giant — Monster016_13, ID 1BA0
+7131:Cocadrille — Monster036_11, ID 1BDB
+7128:Cockatrice — Monster036_01, ID 1BD8
+8021:Coeurl — AddMonster022, ID 1F55
+7068:Copper Gnome — Monster016_01, ID 1B9C
+8006:Crimson Armor — AddMonster007, ID 1F46
+8023:Daigoro — AddMonster024, ID 1F57
+8004:Dark Behemoth — AddMonster005, ID 1F44
+7173:Death Machine — Monster051_03, ID 1C05
+7200:Death Searcher — Monster051_27, ID 1C20
+7065:Deathskull — Monster013_01, ID 1B99
+7099:Demivampire — Monster023_12, ID 1BBB
+8016:Devil Wolf — AddMonster017, ID 1F50
+7154:Diabolos — Monster042_03, ID 1BF2
+7216:Diabolos★ — Monster042_03_n01, ID 1C30
+7152:Diva Serafie — Monster041_13, ID 1BF0
+8014:Dramut — AddMonster015, ID 1F4E
+7139:Dualizard — Monster039_01, ID 1BE3
+7174:Einhänder — Monster051_04, ID 1C06
+7081:Elasmos — Monster018_13, ID 1BA9
+7040:Elefenrir — Monster007_13, ID 1B80
+7199:Elite Entom — Monster040_21, ID 1C1F
+7168:Enkidu — Monster049_01, ID 1C00 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7145:Entom Guard — Monster040_01, ID 1BE9
+7147:Entom Soldier — Monster040_11, ID 1BEB
+7195:Federation Guard — Monster070_03, ID 1C1B
+7037:Fenrir — Monster007_03, ID 1B7D
+7087:Flammantoise — Monster019_11, ID 1BAF
+7112:Flan — Monster032_02, ID 1BC8
+7114:Flan Princess — Monster032_05, ID 1BCA
+7135:Floating Eye — Monster038_01, ID 1BDF
+7004:Fritt — Monster002_01, ID 1B5C
+8029:Fritt — AddMonster030, ID 1F5D [TEST / EXPERIMENTAL]
+8024:Gamit — AddMonster025, ID 1F58
+7155:Garchimacera — Monster042_11, ID 1BF3
+8028:Garland — AddMonster029, ID 1F5C
+7143:Ghidra — Monster039_12, ID 1BE7
+7027:Giant Goblin — Monster005_03, ID 1B73
+7186:Gigantrot — Monster053_12, ID 1C12
+7184:Gigantuar — Monster053_02, ID 1C10
+7169:Gilgamesh — Monster049_02, ID 1C01
+7009:Gleed — Monster002_12, ID 1B61
+7010:Gleefrit — Monster002_13, ID 1B62
+7052:Glow Moogle — Monster010_11, ID 1B8C
+7025:Goblin — Monster005_01, ID 1B71
+7026:Goblin Guard — Monster005_02, ID 1B72
+7113:Golden Flan — Monster032_04, ID 1BC9
+7197:Golem Head — Monster016_21, ID 1C1D
+7041:Grandfenrir — Monster007_23, ID 1B81
+7164:Holy Dragon — Monster046_03, ID 1BFC
+7035:Hyperion — Monster006_12, ID 1B7B
+7098:Ice Bat — Monster023_11, ID 1BBA
+7007:Ifreeta — Monster002_05, ID 1B5F
+7208:Ifreeta★ — Monster002_35, ID 1C28
+7006:Ifrit — Monster002_03, ID 1B5E
+7207:Ifrit★ — Monster002_23, ID 1C27
+7153:Imp — Monster042_01, ID 1BF1
+7133:Iris — Monster036_13, ID 1BDD
+7070:Iron Giant — Monster016_04, ID 1B9E
+7189:Iron Muscles — Monster055_11, ID 1C15
+7022:Joult — Monster004_11, ID 1B6E
+7116:Kaguya Flan — Monster032_15, ID 1BCC
+7110:King Bomb — Monster031_04, ID 1BC6
+8003:Kobold Mimic — AddMonster004, ID 1F43
+7119:Korrigan — Monster033_11, ID 1BCF
+7157:Kraken — Monster044_03, ID 1BF5
+7053:Kupicaroon — Monster010_12, ID 1B8D
+7051:Kupirate — Monster010_02, ID 1B8B
+7046:Kuza Beast — Monster008_13, ID 1B86
+7045:Kuza Kit — Monster008_11, ID 1B85
+7001:Kyubi — Monster001_02, ID 1B59
+8019:Largebuncle — AddMonster020, ID 1F53
+7071:Lead Gnome — Monster016_11, ID 1B9F
+7108:Left Claw — Monster027_11, ID 1BC4
+8020:Lesser Coeurl — AddMonster021, ID 1F54
+7082:Leviathan — Monster018_05, ID 1BAA
+7213:Leviathan★ — Monster018_05_n01, ID 1C2D
+8018:Lich — AddMonster019, ID 1F52
+7093:Lucky Toad — Monster021_02, ID 1BB5
+7188:Maduin — Monster055_04, ID 1C14
+7104:Magic Jar — Monster024_12, ID 1BC0
+7101:Magic Pot — Monster024_02, ID 1BBD
+7171:Magitek Armor — Monster051_01, ID 1C03
+7178:Magitek Armor A — Monster051_11, ID 1C0A
+7172:Magitek Armor B — Monster051_02, ID 1C04
+8007:Magitek Armor P — AddMonster008, ID 1F47
+7181:Magna Roader — Monster052_01, ID 1C0D
+7182:Magna Roader — Monster052_11, ID 1C0E
+7198:Magna Roader — Monster052_21, ID 1C1E
+7118:Malboro — Monster033_03, ID 1BCE
+7120:Malboro Menace — Monster033_13, ID 1BD0
+7117:Mandragora — Monster033_01, ID 1BCD
+7121:Manticore — Monster034_01, ID 1BD1
+8017:Marilith — AddMonster018, ID 1F51
+7202:Master Cactuar — Monster053_21, ID 1C22
+7201:Master Moogle — Monster010_21, ID 1C21
+7203:Master Tonberry — Monster012_22, ID 1C23
+8011:Mecha Choco — AddMonster012, ID 1F4B
+7033:Mecha Chocobo — Monster006_05, ID 1B79
+7205:Mecha Chocobo★ — Monster006_45, ID 1C25
+7058:Mega Nightsqual — Monster011_12, ID 1B92
+7162:Mega Red Dragon — Monster045_03, ID 1BFA
+7055:Mega Sharqual — Monster011_02, ID 1B8F
+8012:Mel — AddMonster013, ID 1F4C
+7124:Memecoleous — Monster034_13, ID 1BD4
+7196:Metalliskull — Monster013_21, ID 1C1C
+7100:Mimic — Monster024_01, ID 1BBC
+7103:Mimic Jackpot — Monster024_11, ID 1BBF
+7102:Mimic Queen — Monster024_03, ID 1BBE
+7156:Mindflayer — Monster044_01, ID 1BF4
+7218:Miney — Monster009_01_n01, ID 1C32
+7115:Mini Flan — Monster032_12, ID 1BCB
+7166:Mini Golem — Monster016_02, ID 1BFE
+7084:Minimantoise — Monster019_01, ID 1BAC
+7089:Minotaur — Monster020_02, ID 1BB1
+7012:Mishiva — Monster003_02, ID 1B64
+7163:Mist Dragon — Monster046_02, ID 1BFB
+7219:Mo — Monster009_01_n02, ID 1C33
+7050:Moogle — Monster010_01, ID 1B8A
+8022:Moomba — AddMonster023, ID 1F56
+7067:Mordskull — Monster013_11, ID 1B9B
+7073:Mu — Monster017_01, ID 1BA1
+7069:Mythril Giant — Monster016_03, ID 1B9D
+7144:Nidhogg — Monster039_13, ID 1BE8
+7127:Nightmare — Monster035_12, ID 1BD7
+7057:Nightsqual — Monster011_11, ID 1B91
+7132:Nirvalefor — Monster036_12, ID 1BDC
+8010:NOT USED — AddMonster011, ID 1F4A [UNUSED / EXPERIMENTAL]
+8033:NOT USED — AddMonster034, ID 1F61 [UNUSED / EXPERIMENTAL]
+8034:NOT USED — AddMonster035, ID 1F62 [UNUSED / EXPERIMENTAL]
+8035:NOT USED — AddMonster036, ID 1F63 [UNUSED / EXPERIMENTAL]
+8036:NOT USED — AddMonster037, ID 1F64 [UNUSED / EXPERIMENTAL]
+8037:NOT USED — AddMonster038, ID 1F65 [UNUSED / EXPERIMENTAL]
+8038:NOT USED — AddMonster039, ID 1F66 [UNUSED / EXPERIMENTAL]
+8039:NOT USED — AddMonster040, ID 1F67 [UNUSED / EXPERIMENTAL]
+7077:Nut Eater — Monster017_12, ID 1BA5
+7126:Odin — Monster035_04, ID 1BD6
+7215:Odin★ — Monster035_04_n01, ID 1C2F
+7146:Omega — Monster040_03, ID 1BEA
+7148:Omega Bane — Monster040_13, ID 1BEC
+7175:Omega God — Monster051_05, ID 1C07
+7063:Paleberry — Monster012_12, ID 1B97
+7064:Paleberry King — Monster012_13, ID 1B98
+7130:Phoenix — Monster036_03, ID 1BDA
+8013:Ponini — AddMonster014, ID 1F4D
+7028:Princess Goblin — Monster005_04, ID 1B74
+7220:Princess Goblin★ — Monster005_04_n01, ID 1C34
+7049:Quachacho — Monster009_11, ID 1B89
+7047:Quacho — Monster009_01, ID 1B87
+7048:Quacho Queen — Monster009_02, ID 1B88
+7217:Quacho Queen★ — Monster009_02_n01, ID 1C31
+7024:Rairamuh — Monster004_13, ID 1B70
+7021:Ramewl — Monster004_05, ID 1B6D
+7212:Ramewl★ — Monster004_05_n01, ID 1C2C
+7020:Ramuh — Monster004_03, ID 1B6C
+7211:Ramuh★ — Monster004_03_n01, ID 1C2B
+7076:Reaver Mu — Monster017_11, ID 1BA4
+8002:Red Bonnetberry — AddMonster003, ID 1F42
+7029:Red Cap — Monster005_11, ID 1B75
+7030:Red Captain — Monster005_12, ID 1B76
+7161:Red Dragon — Monster045_02, ID 1BF9
+7107:Right Claw — Monster027_01, ID 1BC3
+7105:Sand Worm — Monster025_02, ID 1BC1
+7123:Sandicore — Monster034_11, ID 1BD3
+7083:Sea Serpent — Monster018_11, ID 1BAB
+7079:Sea Snake — Monster018_01, ID 1BA7
+7106:Sea Worm — Monster025_12, ID 1BC2
+7170:Searcher — Monster051_07, ID 1C02
+7177:Security Eye — Monster051_17, ID 1C09
+7149:Serafie — Monster041_01, ID 1BED
+7054:Sharqual — Monster011_01, ID 1B8E
+7013:Shiva — Monster003_03, ID 1B65
+3009:Shiva-Ixion — Chara011, ID 0BC1
+7014:Shivalry — Monster003_05, ID 1B66
+7210:Shivalry★ — Monster003_05_n01, ID 1C2A
+7209:Shiva★ — Monster003_03_n01, ID 1C29
+7017:Shivver — Monster003_13, ID 1B69
+7016:Shivverina — Monster003_12, ID 1B68
+7150:Siren — Monster041_03, ID 1BEE
+7090:Sistertaur — Monster020_11, ID 1BB2
+7074:Skull Eater — Monster017_02, ID 1BA2
+8005:Sky Dragon — AddMonster006, ID 1F45
+7165:Spark Dragon — Monster046_12, ID 1BFD
+7122:Sphinx — Monster034_03, ID 1BD2
+7159:Squidraken — Monster044_11, ID 1BF7
+7191:Supraltima Weapon — Monster056_12, ID 1C17
+7080:Syldra — Monster018_03, ID 1BA8
+8026:Syldra★ — AddMonster027, ID 1F5A
+7151:Sylph — Monster041_11, ID 1BEF
+8015:Sylphine — AddMonster016, ID 1F4F
+7000:Tama — Monster001_01, ID 1B58
+7003:Tamamohimé — Monster001_12, ID 1B5B
+8025:The Immortal Dark Dragon — AddMonster026, ID 1F59 [OUTSIDE LIBRARY / EXPERIMENTAL]
+8032:The Immortal Dark Dragon — AddMonster033, ID 1F60 [OUTSIDE LIBRARY / EXPERIMENTAL]
+7141:Tiamat — Monster039_03, ID 1BE5
+7187:Titan — Monster055_01, ID 1C13
+7060:Tonberry — Monster012_02, ID 1B94
+7061:Tonberry King — Monster012_03, ID 1B95
+7078:Topaz Carbuncle — Monster017_13, ID 1BA6
+7140:Trihyde — Monster039_02, ID 1BE4
+7190:Ultima Weapon — Monster056_02, ID 1C16
+7158:Ultros — Monster044_04, ID 1BF6
+7221:Ultros★ — Monster044_04_n01, ID 1C35
+7066:Undead Princess — Monster013_04, ID 1B9A
+7222:Undead Princess★ — Monster013_04_n01, ID 1C36
+7125:Unicorn — Monster035_02, ID 1BD5
+7129:Valefor — Monster036_02, ID 1BD9
+7096:Vampire — Monster023_02, ID 1BB8
+7097:Vampire Prime — Monster023_04, ID 1BB9
+7023:Voultr — Monster004_12, ID 1B6F
+7179:War Machine — Monster051_13, ID 1C0B
+7167:Water Golem — Monster016_12, ID 1BFF
+7092:Water Toad — Monster021_01, ID 1BB4
+7008:Weeglee — Monster002_11, ID 1B60
+7095:Werebat — Monster023_01, ID 1BB7
+8001:White Chocobo — AddMonster002, ID 1F41
+7036:White Nakk — Monster007_01, ID 1B7C
+7094:Wind Toad — Monster021_11, ID 1BB6
+7176:XG — Monster051_06, ID 1C08
+8027:Yojimbo — AddMonster028, ID 1F5B
+7002:Yurugu — Monster001_11, ID 1B5A
+7019:Zaphr — Monster004_02, ID 1B6B
+7018:Zapt — Monster004_01, ID 1B6A
+8031:Zapt — AddMonster032, ID 1F5F [TEST / EXPERIMENTAL]</DropDownList>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>90</ID>
+          <Description>"Save Anywhere - Field Menu [Experimental; reopen menu; use a separate save slot]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+// The native field-menu descriptor for entry 9 (Save, menu type 0B).
+// Its +20 field requires event flag 0FAC. -1 means no required flag,
+// exactly as used by the other unrestricted menu entries.
+// Changes only this static descriptor, not the persistent event-flag store.
+define(WFF_SaveDescriptor,WOFF.exe+2B02278)
+assert(WFF_SaveDescriptor+10,0B 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF AC 0F 00 00 00 00 00 00)
+WFF_SaveDescriptor+20:
+dd FFFFFFFF
+[DISABLE]
+WFF_SaveDescriptor+20:
+dd 00000FAC
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols />
+  <Comments>Original implementation. DrummerIX reference CT was read for context only; addresses and machine instructions were independently checked in the running game. No third-party scripts are embedded. Enable parent first; this also installs UI-only read-only guards on grey INFO ONLY rows. Those rows cannot be frozen or edited through ordinary table controls; selectors and multiplier values remain editable. Confirmed gameplay features have no Test tag. Experimental limitations remain labelled. Disable children before parent, and disable everything before closing Cheat Engine. Gil changes remain after disabling. SP options share hooks and can be combined. XP and level changes become visible after battle, when back on the field. User confirmed foundation scripts work in gameplay on 2026-10-10. User also confirmed v3 God Mode and Infinite Battle AP work. User confirmed v4 damage and max-vitals options work. One-Hit Kill overrides the player multiplier; God Mode and Always Max override the enemy multiplier. Multipliers operate by target side, not attacker identity. Healing and zero-damage hits are not multiplied. Enable Always Max in battle; if party actors are rebuilt, retoggle it to rediscover them. Always Max does not revive KO actors; refilled values remain after disabling. v5 adds zero ability AP costs and two shared-hook item consumption modes. Infinite Usage overrides Never Below 1. Item routines may also serve non-use inventory removal; disable item options for selling, crafting, or quest hand-ins until tested. User confirmed v5 options work in gameplay. v6 adds Easy Imprism readiness and chance hooks for known enemy Mirage actors with a native capture capability. Native Prism, living-target, and other eligibility checks remain. No actor capture-state fields are edited. User confirmed v6 captures Mu; Chocochicks were blocked by missing required Prism, not their species conditions. v7 merges capture-only Prism requirement and consumption bypass into Easy Imprism to capture eligible Mirages without meeting their normal readiness condition or owning their Prism. Native living-target, capture-state, and battle restrictions remain; this does not promise boss/uncapturable support. User confirmed v7 captures a Chocochick with no Prism. v8 replacement failed: visual clone changed but ownership did not. v9 queues one successful capture and changes only its native owned-grant argument. Enable its parent, select a species, then arm. It starts disarmed. The arm flag is consumed once; toggle Arm off/on to re-arm. Status 2 means queued; finish the battle without re-arming or disabling replacement. The capture animation remains the original species. The user verified Mu-to-Chocochick ownership replacement on 2026-10-10; live primary and board/form IDs agree. All battle/capture visuals may still show the original Mirage until fully out of battle: check the Mirage list afterward. Only one capture per battle is validated; other species, multiple captures and reloading saved replacements are untested. A 0 status means idle/consumed, not proof the selected species is safe or that a free ownership slot was available. Native construction receives the chosen ID; enemy IDs remain unchanged. 264 candidates were independently decoded from installed definitions; 248 are library-listed. Unused/test/outside-library entries are labelled, not certified ownable. Library membership does not guarantee safety. Back up saves and initially test a normal species. Verify appearance, board, abilities and stats before saving a replacement result. Do not freeze informational fields. Champion-cost and instant-unstack features are not implemented. v11 bypasses only the field-menu Save entry's required permission flag. Close/reopen the menu after toggling. Does not save automatically or enable battle/cutscene menus. Experimental: use a separate save slot; save/reload away from normal save points needs testing. No save-writing routines or persistent event flags are modified.</Comments>
+</CheatTable>

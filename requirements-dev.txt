@@ -1,0 +1,2 @@
+pefile
+# Only optional Windows live checks need this dependency.

@@ -1,0 +1,164 @@
+[
+  {
+    "id": 1,
+    "description": "World of Final Fantasy - Original v13 [Enable First]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 10,
+    "description": "Infinite Gil - Hold 9,999,999 [Balance stays after disable]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 11,
+    "description": "Current Gil (editable)",
+    "code_type": "4 Bytes",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 20,
+    "description": "Ignore SP Cost Requirement",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 21,
+    "description": "Infinite SP - No Deduction",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 30,
+    "description": "XP Options - Enable [XP/levels update after battle, back on field]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 31,
+    "description": "XP Multiplier (0 = none; 1 = normal; 50000 supported)",
+    "code_type": "Double",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 32,
+    "description": "Max Level from Next Positive XP Award [Overrides multiplier]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 40,
+    "description": "Battle HP Options - Enable",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 41,
+    "description": "God Mode - Party HP Damage Blocked [Not status immunity]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 42,
+    "description": "Always Max Health/AP - Living Party, Battle",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 43,
+    "description": "One-Hit Kill - Enemies [Overrides damage multiplier]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 44,
+    "description": "Player Damage Multiplier (to enemies; 0 = none, 1 = normal)",
+    "code_type": "Double",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 45,
+    "description": "Enemy Damage Multiplier (to party; 0 = none, 1 = normal)",
+    "code_type": "Double",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 50,
+    "description": "Infinite Battle AP - Party Only [Refreshes on AP change]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 51,
+    "description": "AP Cost of Abilities Always 0 [Unlocked abilities only]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 60,
+    "description": "Item Usage Options - Enable [Battle + Field]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 61,
+    "description": "Infinite Item Usage [Must own item]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 62,
+    "description": "Never Below 1 Item When Used",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 70,
+    "description": "Easy Imprism - Ignore Conditions + Boost Chance + No Prisms",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  },
+  {
+    "id": 80,
+    "description": "Next Capture Replacement - Enable [Experimental; ONE capture per battle]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "experimental"
+  },
+  {
+    "id": 81,
+    "description": "1. Select replacement Mirage [Unusual entries marked; ownership unverified]",
+    "code_type": "4 Bytes",
+    "status": "experimental"
+  },
+  {
+    "id": 82,
+    "description": "2. Arm ONE [Replacement appears in Mirage list AFTER battle; off/on to re-arm]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "experimental"
+  },
+  {
+    "id": 83,
+    "description": "INFO ONLY - Arm status [Read-only]",
+    "code_type": "4 Bytes",
+    "status": "experimental"
+  },
+  {
+    "id": 84,
+    "description": "INFO ONLY - Last original species [Read-only]",
+    "code_type": "4 Bytes",
+    "status": "experimental"
+  },
+  {
+    "id": 85,
+    "description": "INFO ONLY - Last replacement species [Read-only; verify in Mirage list]",
+    "code_type": "4 Bytes",
+    "status": "experimental"
+  },
+  {
+    "id": 90,
+    "description": "Save Anywhere - Field Menu [Reopen menu after toggling; separate save slot recommended]",
+    "code_type": "Auto Assembler / Lua",
+    "status": "confirmed / supporting control"
+  }
+]

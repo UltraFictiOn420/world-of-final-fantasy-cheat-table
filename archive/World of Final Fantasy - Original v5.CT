@@ -1,0 +1,898 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"World of Final Fantasy - Original v5 [Enable First]"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+// Cost-availability check and spending are independent, but share our flags.
+aobscanmodule(WFF_SPCheck,WOFF.exe,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20 5B C3 CC)
+aobscanmodule(WFF_SPCheckBase,WOFF.exe,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20 5B C3 48 83 FA 03)
+aobscanmodule(WFF_SPSpend,WOFF.exe,0F B7 81 E8 00 00 00 3B C3 72 2B 66 2B C3 66 01 99 EA 00 00 00)
+assert(WFF_SPCheck,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20)
+assert(WFF_SPCheckBase,0F B7 80 E8 00 00 00 3B C3 0F 93 C0 48 83 C4 20)
+assert(WFF_SPSpend,0F B7 81 E8 00 00 00 3B C3 72 2B 66 2B C3)
+alloc(WFF_BoardCode,512,WFF_SPCheck)
+label(WFF_CFG)
+label(WFF_Availability)
+label(WFF_AvailabilityBase)
+label(WFF_EvaluateSP)
+label(WFF_AvailabilityDone)
+label(WFF_Spending)
+label(WFF_ApplyCost)
+label(WFF_KeepSP)
+label(WFF_PaySP)
+label(WFF_SPFailure)
+registersymbol(WFF_CFG)
+registersymbol(WFF_SPCheck)
+registersymbol(WFF_SPCheckBase)
+registersymbol(WFF_SPSpend)
+
+WFF_BoardCode:
+WFF_CFG:
+db 00 00
+align 10
+WFF_Availability:
+call WFF_EvaluateSP
+add rsp,20
+jmp WFF_SPCheck+10
+WFF_AvailabilityBase:
+call WFF_EvaluateSP
+add rsp,20
+jmp WFF_SPCheckBase+10
+WFF_EvaluateSP:
+// Preserve the original comparison result before consulting our option.
+setae al
+pushfq
+cmp byte ptr [WFF_CFG],0
+je WFF_AvailabilityDone
+mov al,1
+WFF_AvailabilityDone:
+popfq
+ret
+
+WFF_Spending:
+cmp byte ptr [WFF_CFG],0
+jne WFF_ApplyCost
+// Recreate the original affordability comparison when Ignore SP is disabled.
+cmp eax,ebx
+jb WFF_SPFailure
+WFF_ApplyCost:
+cmp byte ptr [WFF_CFG+1],0
+jne WFF_KeepSP
+cmp eax,ebx
+jae WFF_PaySP
+// Ignore SP never lets a 16-bit point balance wrap below zero.
+xor eax,eax
+jmp WFF_KeepSP
+WFF_PaySP:
+sub ax,bx
+WFF_KeepSP:
+jmp WFF_SPSpend+E
+WFF_SPFailure:
+jmp WFF_SPSpend+36
+
+WFF_SPCheck+9:
+jmp WFF_Availability
+nop 2
+WFF_SPCheckBase+9:
+jmp WFF_AvailabilityBase
+nop 2
+WFF_SPSpend+9:
+jmp WFF_Spending
+
+[DISABLE]
+WFF_SPCheck+9:
+db 0F 93 C0 48 83 C4 20
+WFF_SPCheckBase+9:
+db 0F 93 C0 48 83 C4 20
+WFF_SPSpend+9:
+db 72 2B 66 2B C3
+unregistersymbol(WFF_CFG)
+unregistersymbol(WFF_SPCheck)
+unregistersymbol(WFF_SPCheckBase)
+unregistersymbol(WFF_SPSpend)
+dealloc(WFF_BoardCode)
+</AssemblerScript>
+      <Options moDeactivateChildrenAsWell="1" />
+      <CheatEntries>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>"Infinite Gil - Hold 9,999,999 [Test; balance stays after disable]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_GilTimer then error('Gil hold is already active.') end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Enable the table first.') end
+local pid=getOpenedProcessID()
+local function gilAddress()
+  if getOpenedProcessID()~=pid then return nil end
+  local root=readQword(b+0x3439EC0)
+  if not root or root&lt;0x10000 or root&gt;=0x7FFFFFFFFFFF then return nil end
+  local a=root+0x37368
+  local v=readInteger(a)
+  if not v or v&lt;0 or v&gt;9999999 then return nil end
+  return a
+end
+if not gilAddress() then error('Gil data unavailable. Load your save first.') end
+WFF_GilTimer=createTimer(nil,false)
+WFF_GilTimer.Interval=100
+WFF_GilTimer.OnTimer=function()
+  local a=gilAddress()
+  if a then writeInteger(a,9999999) end
+end
+WFF_GilTimer.Enabled=true
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_GilTimer then
+  WFF_GilTimer.Enabled=false
+  WFF_GilTimer.destroy()
+  WFF_GilTimer=nil
+end
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"Current Gil (editable)"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>WOFF.exe+3439EC0</Address>
+          <Offsets>
+            <Offset>37368</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>20</ID>
+          <Description>"Ignore SP Cost Requirement [Test]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+WFF_CFG+0:
+db 01
+[DISABLE]
+WFF_CFG+0:
+db 00
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
+          <Description>"Infinite SP - No Deduction [Test]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+WFF_CFG+1:
+db 01
+[DISABLE]
+WFF_CFG+1:
+db 00
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>30</ID>
+          <Description>"XP Options - Enable [XP/levels update after battle, back on field]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(WFF_XPGain,WOFF.exe,41 03 F0 3B C6 0F 42 F0 48 81 C1 98 00 00 00 E8 ?? ?? ?? ?? 48 8B 0D)
+assert(WFF_XPGain,41 03 F0 3B C6)
+alloc(WFF_XPCode,512,WFF_XPGain)
+label(WFF_XPFactor)
+label(WFF_XPMaxLevel)
+label(WFF_XPOriginal)
+label(WFF_XPReturn)
+label(WFF_XPScaled)
+label(WFF_XPClamp)
+label(WFF_XPZero)
+label(WFF_XPSetCap)
+registersymbol(WFF_XPFactor)
+registersymbol(WFF_XPMaxLevel)
+registersymbol(WFF_XPGain)
+
+WFF_XPCode:
+// Here EAX is this recipient's level-99 total; R8D is current total XP.
+// ESI is the recipient-specific award, after any upstream XP sharing.
+test esi,esi
+js WFF_XPOriginal
+push r9
+sub rsp,10
+movups [rsp],xmm0
+test esi,esi
+jz WFF_XPZero
+cmp byte ptr [WFF_XPMaxLevel],0
+jne WFF_XPSetCap
+// A 64-bit double intermediate avoids wrapping the 32-bit cumulative total.
+mov r9d,esi
+cvtsi2sd xmm0,r9
+// Factor is Double: 0 = none, 1 = normal, 50000 = fifty thousand times.
+mulsd xmm0,[WFF_XPFactor]
+ucomisd xmm0,xmm0
+jp WFF_XPScaled
+mov r9d,eax
+sub r9d,r8d
+// At/past cap, leave the existing native cap check in control.
+cmp eax,r8d
+jbe WFF_XPZero
+push rax
+sub rsp,10
+movups [rsp],xmm1
+cvtsi2sd xmm1,r9
+ucomisd xmm0,xmm1
+movups xmm1,[rsp]
+lea rsp,[rsp+10]
+pop rax
+jae WFF_XPSetCap
+cvttsd2si r9,xmm0
+test r9,r9
+js WFF_XPZero
+add r9,r8
+mov esi,r9d
+jmp WFF_XPClamp
+WFF_XPScaled:
+// Invalid (NaN) factor falls back to the unscaled award, without overflow.
+mov r9d,esi
+add r9,r8
+mov esi,r9d
+cmp r9,rax
+jbe WFF_XPClamp
+WFF_XPSetCap:
+mov esi,eax
+jmp WFF_XPClamp
+WFF_XPZero:
+mov esi,r8d
+WFF_XPClamp:
+movups xmm0,[rsp]
+add rsp,10
+pop r9
+cmp eax,esi
+jmp WFF_XPReturn
+WFF_XPOriginal:
+add esi,r8d
+cmp eax,esi
+WFF_XPReturn:
+jmp WFF_XPGain+5
+align 10
+WFF_XPFactor:
+dq (double)1.0
+WFF_XPMaxLevel:
+db 00
+
+WFF_XPGain:
+jmp WFF_XPCode
+
+[DISABLE]
+WFF_XPGain:
+db 41 03 F0 3B C6
+unregistersymbol(WFF_XPFactor)
+unregistersymbol(WFF_XPMaxLevel)
+unregistersymbol(WFF_XPGain)
+dealloc(WFF_XPCode)
+</AssemblerScript>
+          <Options moDeactivateChildrenAsWell="1" />
+          <CheatEntries>
+            <CheatEntry>
+              <ID>31</ID>
+              <Description>"XP Multiplier (0 = none; 1 = normal; 50000 supported)"</Description>
+              <VariableType>Double</VariableType>
+              <Address>WFF_XPFactor</Address>
+              <DropDownList ReadOnly="0" DescriptionOnly="1" DisplayValueAsItem="1">0:No XP
+1:Normal
+2:2x
+5:5x
+10:10x
+20:20x
+100:100x
+1000:1000x
+50000:50000x</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>32</ID>
+              <Description>"Max Level from Next Positive XP Award [Overrides multiplier; Test]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_XPMaxLevel:
+db 01
+[DISABLE]
+WFF_XPMaxLevel:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>40</ID>
+          <Description>"Battle HP Options - Enable [Test]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_HPApply,WOFF.exe,F3 0F 2C C7 66 0F 6E C0 0F 5B C0 F3 0F 5C C8 F3 0F 5F CB)
+assert(WFF_HPApply,F3 0F 2C C7 66 0F 6E C0)
+alloc(WFF_HPCode,1024,WFF_HPApply)
+label(WFF_GodMode)
+label(WFF_MaxVitals)
+label(WFF_OneHit)
+label(WFF_PlayerDamage)
+label(WFF_EnemyDamage)
+label(WFF_DamageCap)
+label(WFF_HPParty)
+label(WFF_HPEnemy)
+label(WFF_HPScale)
+label(WFF_HPZero)
+label(WFF_HPCap)
+label(WFF_LastHPActor)
+label(WFF_HPDone)
+registersymbol(WFF_HPApply)
+registersymbol(WFF_GodMode)
+registersymbol(WFF_MaxVitals)
+registersymbol(WFF_OneHit)
+registersymbol(WFF_PlayerDamage)
+registersymbol(WFF_EnemyDamage)
+registersymbol(WFF_LastHPActor)
+WFF_HPCode:
+cvttss2si eax,xmm7
+pushfq
+mov [WFF_LastHPActor],rbx
+// Only positive HP loss to the independently observed player side is blocked.
+test eax,eax
+jle WFF_HPDone
+cmp dword ptr [rbx+2E34],0
+je WFF_HPParty
+cmp dword ptr [rbx+2E34],1
+je WFF_HPEnemy
+jmp WFF_HPDone
+WFF_HPParty:
+cmp byte ptr [WFF_MaxVitals],0
+jne WFF_HPZero
+cmp byte ptr [WFF_GodMode],0
+jne WFF_HPZero
+cvtsi2sd xmm0,eax
+mulsd xmm0,[WFF_EnemyDamage]
+jmp WFF_HPScale
+WFF_HPEnemy:
+cmp byte ptr [WFF_OneHit],0
+je @f
+movss xmm0,[rbx+29CC]
+cvtss2sd xmm0,xmm0
+jmp WFF_HPScale
+@@:
+cvtsi2sd xmm0,eax
+mulsd xmm0,[WFF_PlayerDamage]
+WFF_HPScale:
+// NaN falls back to native damage. Negative factors mean zero damage.
+ucomisd xmm0,xmm0
+jp WFF_HPDone
+comisd xmm0,[WFF_DamageCap]
+jae WFF_HPCap
+cvttsd2si eax,xmm0
+test eax,eax
+jns WFF_HPDone
+WFF_HPZero:
+xor eax,eax
+jmp WFF_HPDone
+WFF_HPCap:
+mov eax,#2147483000
+WFF_HPDone:
+popfq
+movd xmm0,eax
+jmp WFF_HPApply+8
+align 10
+WFF_GodMode:
+db 00
+WFF_MaxVitals:
+db 00
+WFF_OneHit:
+db 00
+align 8
+WFF_PlayerDamage:
+dq (double)1.0
+WFF_EnemyDamage:
+dq (double)1.0
+WFF_DamageCap:
+dq (double)2147483000.0
+WFF_LastHPActor:
+dq 0
+WFF_HPApply:
+jmp WFF_HPCode
+nop 3
+[DISABLE]
+WFF_HPApply:
+db F3 0F 2C C7 66 0F 6E C0
+unregistersymbol(WFF_HPApply)
+unregistersymbol(WFF_GodMode)
+unregistersymbol(WFF_MaxVitals)
+unregistersymbol(WFF_OneHit)
+unregistersymbol(WFF_PlayerDamage)
+unregistersymbol(WFF_EnemyDamage)
+unregistersymbol(WFF_LastHPActor)
+dealloc(WFF_HPCode)
+</AssemblerScript>
+          <Options moDeactivateChildrenAsWell="1" />
+          <CheatEntries>
+            <CheatEntry>
+              <ID>41</ID>
+              <Description>"God Mode - Party HP Damage Blocked [Test; not status immunity]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_GodMode:
+db 01
+[DISABLE]
+WFF_GodMode:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>42</ID>
+              <Description>"Always Max Health/AP - Living Party, Battle [Test]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_VitalsTimer then error('Max-vitals timer is already active.') end
+local pid=getOpenedProcessID()
+local classes={getAddress('WOFF.exe+2F4B168'),getAddress('WOFF.exe+2F39FC0')}
+local flag=getAddress('WFF_MaxVitals')
+local actors={}
+for _,vt in ipairs(classes) do
+  local bytes={}
+  local value=vt
+  for i=1,8 do bytes[i]=string.format('%02X',value%256); value=math.floor(value/256) end
+  local hits=AOBScan(table.concat(bytes,' '),'+W-C')
+  if hits then
+    for i=0,hits.Count-1 do
+      local a=tonumber(hits[i],16)
+      local side=readInteger(a+0x2E34)
+      if side==0 or side==-1 or side==0xFFFFFFFF then actors[#actors+1]={address=a,vtable=vt} end
+    end
+    hits.destroy()
+  end
+end
+if #actors==0 then error('No verified party actor pool found.') end
+local function refill()
+  if getOpenedProcessID()~=pid then
+    if WFF_VitalsTimer then WFF_VitalsTimer.destroy();WFF_VitalsTimer=nil end
+    return
+  end
+  for _,actor in ipairs(actors) do
+    local a=actor.address
+    if readQword(a)==actor.vtable and readInteger(a+0x2E34)==0 then
+      local hp,maxHP=readFloat(a+0x29C8),readFloat(a+0x29CC)
+      local maxAP=readFloat(a+0x29D4)
+      if hp and maxHP and hp&gt;0 and maxHP&gt;=hp and maxHP&lt;10000000 then
+        writeFloat(a+0x29C8,maxHP)
+        if maxAP and maxAP&gt;=0 and maxAP&lt;=1000 then writeFloat(a+0x29D0,maxAP) end
+      end
+    end
+  end
+end
+WFF_VitalsTimer=createTimer(nil,false)
+WFF_VitalsTimer.Interval=100
+WFF_VitalsTimer.OnTimer=refill
+writeBytes(flag,1)
+refill()
+WFF_VitalsTimer.Enabled=true
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if WFF_VitalsTimer then WFF_VitalsTimer.destroy();WFF_VitalsTimer=nil end
+local flag=getAddressSafe('WFF_MaxVitals')
+if flag then writeBytes(flag,0) end
+{$asm}
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>43</ID>
+              <Description>"One-Hit Kill - Enemies [Overrides damage multiplier; Test]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_OneHit:
+db 01
+[DISABLE]
+WFF_OneHit:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>44</ID>
+              <Description>"Player Damage Multiplier (to enemies; 0 = none, 1 = normal)"</Description>
+              <VariableType>Double</VariableType>
+              <Address>WFF_PlayerDamage</Address>
+              <DropDownList ReadOnly="0" DescriptionOnly="1" DisplayValueAsItem="1">0:No damage
+0.25:Quarter damage
+0.5:Half damage
+1:Normal
+2:2x
+5:5x
+10:10x
+100:100x</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>45</ID>
+              <Description>"Enemy Damage Multiplier (to party; 0 = none, 1 = normal)"</Description>
+              <VariableType>Double</VariableType>
+              <Address>WFF_EnemyDamage</Address>
+              <DropDownList ReadOnly="0" DescriptionOnly="1" DisplayValueAsItem="1">0:No damage
+0.25:Quarter damage
+0.5:Half damage
+1:Normal
+2:2x
+5:5x
+10:10x
+100:100x</DropDownList>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>50</ID>
+          <Description>"Infinite Battle AP - Party Only [Test; refreshes on AP change]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_APRegen,WOFF.exe,F3 0F 11 B7 D0 29 00 00 48 8B 0D ?? ?? ?? ?? 48 8B 01 FF 90 40 02 00 00)
+assert(WFF_APRegen,F3 0F 11 B7 D0 29 00 00)
+alloc(WFF_APRegenCode,256,WFF_APRegen)
+label(WFF_APRegenOriginal)
+label(WFF_APRegenDone)
+registersymbol(WFF_APRegen)
+WFF_APRegenCode:
+pushfq
+cmp dword ptr [rdi+2E34],0
+jne WFF_APRegenOriginal
+sub rsp,10
+movups [rsp],xmm0
+movss xmm0,[rdi+29D4]
+movss [rdi+29D0],xmm0
+movups xmm0,[rsp]
+add rsp,10
+jmp WFF_APRegenDone
+WFF_APRegenOriginal:
+movss [rdi+29D0],xmm6
+WFF_APRegenDone:
+popfq
+jmp WFF_APRegen+8
+WFF_APRegen:
+jmp WFF_APRegenCode
+nop 3
+aobscanmodule(WFF_APSet,WOFF.exe,F3 0F 11 B3 D0 29 00 00 0F 28 74 24 30 0F 28 7C 24 20)
+assert(WFF_APSet,F3 0F 11 B3 D0 29 00 00)
+alloc(WFF_APSetCode,256,WFF_APSet)
+label(WFF_APSetOriginal)
+label(WFF_APSetDone)
+registersymbol(WFF_APSet)
+WFF_APSetCode:
+pushfq
+cmp dword ptr [rbx+2E34],0
+jne WFF_APSetOriginal
+sub rsp,10
+movups [rsp],xmm0
+movss xmm0,[rbx+29D4]
+movss [rbx+29D0],xmm0
+movups xmm0,[rsp]
+add rsp,10
+jmp WFF_APSetDone
+WFF_APSetOriginal:
+movss [rbx+29D0],xmm6
+WFF_APSetDone:
+popfq
+jmp WFF_APSet+8
+WFF_APSet:
+jmp WFF_APSetCode
+nop 3
+aobscanmodule(WFF_APDamage,WOFF.exe,F3 0F 11 B3 D0 29 00 00 48 8B 5C 24 58 48 8B 74 24 60)
+assert(WFF_APDamage,F3 0F 11 B3 D0 29 00 00)
+alloc(WFF_APDamageCode,256,WFF_APDamage)
+label(WFF_APDamageOriginal)
+label(WFF_APDamageDone)
+registersymbol(WFF_APDamage)
+WFF_APDamageCode:
+pushfq
+cmp dword ptr [rbx+2E34],0
+jne WFF_APDamageOriginal
+sub rsp,10
+movups [rsp],xmm0
+movss xmm0,[rbx+29D4]
+movss [rbx+29D0],xmm0
+movups xmm0,[rsp]
+add rsp,10
+jmp WFF_APDamageDone
+WFF_APDamageOriginal:
+movss [rbx+29D0],xmm6
+WFF_APDamageDone:
+popfq
+jmp WFF_APDamage+8
+WFF_APDamage:
+jmp WFF_APDamageCode
+nop 3
+[DISABLE]
+WFF_APRegen:
+db F3 0F 11 B7 D0 29 00 00
+unregistersymbol(WFF_APRegen)
+dealloc(WFF_APRegenCode)
+WFF_APSet:
+db F3 0F 11 B3 D0 29 00 00
+unregistersymbol(WFF_APSet)
+dealloc(WFF_APSetCode)
+WFF_APDamage:
+db F3 0F 11 B3 D0 29 00 00
+unregistersymbol(WFF_APDamage)
+dealloc(WFF_APDamageCode)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>51</ID>
+          <Description>"AP Cost of Abilities Always 0 [Test; unlocked abilities only]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_AbilityCost,WOFF.exe,48 83 EC 38 80 BA EC 01 00 00 00 48 8B C1 0F 29 74 24 20)
+assert(WFF_AbilityCost,48 83 EC 38 80 BA EC 01 00 00 00)
+alloc(WFF_AbilityCostCode,256,WFF_AbilityCost)
+label(WFF_CostCheckSide)
+label(WFF_CostOriginal)
+registersymbol(WFF_AbilityCost)
+WFF_AbilityCostCode:
+pushfq
+// RCX points at actor statistics (+29B0), not the whole actor.
+mov rax,WOFF.exe+2F4B168
+cmp [rcx-29B0],rax
+je WFF_CostCheckSide
+mov rax,WOFF.exe+2F39FC0
+cmp [rcx-29B0],rax
+jne WFF_CostOriginal
+WFF_CostCheckSide:
+cmp dword ptr [rcx+484],0
+jne WFF_CostOriginal
+popfq
+xorps xmm0,xmm0
+ret
+WFF_CostOriginal:
+popfq
+sub rsp,38
+cmp byte ptr [rdx+1EC],0
+jmp WFF_AbilityCost+B
+WFF_AbilityCost:
+jmp WFF_AbilityCostCode
+nop 6
+// Party command menu affordability and both cost-icon views.
+aobscanmodule(WFF_CostMenu,WOFF.exe,F3 0F 10 70 1C 4D 85 DB 74 3C 49 8B 43 20)
+aobscanmodule(WFF_CostIcons,WOFF.exe,F3 0F 10 40 1C F3 0F 59 05 4D 52 92 02)
+aobscanmodule(WFF_CostIcons2,WOFF.exe,F3 0F 10 40 1C 49 8B 43 20 F3 0F 59 C6)
+assert(WFF_CostMenu,F3 0F 10 70 1C)
+assert(WFF_CostIcons,F3 0F 10 40 1C)
+assert(WFF_CostIcons2,F3 0F 10 40 1C)
+registersymbol(WFF_CostMenu)
+registersymbol(WFF_CostIcons)
+registersymbol(WFF_CostIcons2)
+WFF_CostMenu:
+xorps xmm6,xmm6
+nop 2
+WFF_CostIcons:
+xorps xmm0,xmm0
+nop 2
+WFF_CostIcons2:
+xorps xmm0,xmm0
+nop 2
+[DISABLE]
+WFF_AbilityCost:
+db 48 83 EC 38 80 BA EC 01 00 00 00
+WFF_CostMenu:
+db F3 0F 10 70 1C
+WFF_CostIcons:
+db F3 0F 10 40 1C
+WFF_CostIcons2:
+db F3 0F 10 40 1C
+unregistersymbol(WFF_AbilityCost)
+unregistersymbol(WFF_CostMenu)
+unregistersymbol(WFF_CostIcons)
+unregistersymbol(WFF_CostIcons2)
+dealloc(WFF_AbilityCostCode)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>60</ID>
+          <Description>"Item Usage Options - Enable [Battle + Field; Test]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_ItemSingle,WOFF.exe,FF C9 41 BA 01 00 00 00 89 48 04 48 8B 5C 24 08)
+assert(WFF_ItemSingle,FF C9 41 BA 01 00 00 00)
+alloc(WFF_ItemSingleCode,256,WFF_ItemSingle)
+label(WFF_ItemSingleKeep)
+label(WFF_ItemSingleFinish)
+registersymbol(WFF_ItemSingle)
+aobscanmodule(WFF_ItemMisc,WOFF.exe,41 2B CA 89 48 04 85 C9 7F 0A C7 00 FF FF FF FF)
+assert(WFF_ItemMisc,41 2B CA 89 48 04)
+alloc(WFF_ItemMiscCode,256,WFF_ItemMisc)
+label(WFF_ItemMiscKeep)
+label(WFF_ItemMiscFinish)
+registersymbol(WFF_ItemMisc)
+aobscanmodule(WFF_ItemBattle,WOFF.exe,41 2B C2 89 42 04 85 C0 7F 0A C7 02 FF FF FF FF)
+assert(WFF_ItemBattle,41 2B C2 89 42 04)
+alloc(WFF_ItemBattleCode,256,WFF_ItemBattle)
+label(WFF_ItemBattleKeep)
+label(WFF_ItemBattleFinish)
+registersymbol(WFF_ItemBattle)
+label(WFF_ItemCFG)
+registersymbol(WFF_ItemCFG)
+WFF_ItemSingleCode:
+dec ecx
+pushfq
+cmp byte ptr [WFF_ItemCFG],0
+je WFF_ItemSingleKeep
+mov ecx,[rax+4]
+jmp WFF_ItemSingleFinish
+WFF_ItemSingleKeep:
+cmp byte ptr [WFF_ItemCFG+1],0
+je WFF_ItemSingleFinish
+test ecx,ecx
+jg WFF_ItemSingleFinish
+mov ecx,1
+WFF_ItemSingleFinish:
+popfq
+mov r10d,1
+jmp WFF_ItemSingle+8
+WFF_ItemSingle:
+jmp WFF_ItemSingleCode
+nop 3
+WFF_ItemMiscCode:
+sub ecx,r10d
+pushfq
+test r10d,r10d
+jle WFF_ItemMiscFinish
+cmp byte ptr [WFF_ItemCFG],0
+je WFF_ItemMiscKeep
+mov ecx,[rax+4]
+jmp WFF_ItemMiscFinish
+WFF_ItemMiscKeep:
+cmp byte ptr [WFF_ItemCFG+1],0
+je WFF_ItemMiscFinish
+test ecx,ecx
+jg WFF_ItemMiscFinish
+mov ecx,1
+WFF_ItemMiscFinish:
+popfq
+mov [rax+4],ecx
+jmp WFF_ItemMisc+6
+WFF_ItemMisc:
+jmp WFF_ItemMiscCode
+nop 1
+WFF_ItemBattleCode:
+sub eax,r10d
+pushfq
+test r10d,r10d
+jle WFF_ItemBattleFinish
+cmp byte ptr [WFF_ItemCFG],0
+je WFF_ItemBattleKeep
+mov eax,[rdx+4]
+jmp WFF_ItemBattleFinish
+WFF_ItemBattleKeep:
+cmp byte ptr [WFF_ItemCFG+1],0
+je WFF_ItemBattleFinish
+test eax,eax
+jg WFF_ItemBattleFinish
+mov eax,1
+WFF_ItemBattleFinish:
+popfq
+mov [rdx+4],eax
+jmp WFF_ItemBattle+6
+WFF_ItemBattle:
+jmp WFF_ItemBattleCode
+nop 1
+WFF_ItemSingleCode+E0:
+WFF_ItemCFG:
+db 00 00
+[DISABLE]
+WFF_ItemSingle:
+db FF C9 41 BA 01 00 00 00
+unregistersymbol(WFF_ItemSingle)
+dealloc(WFF_ItemSingleCode)
+WFF_ItemMisc:
+db 41 2B CA 89 48 04
+unregistersymbol(WFF_ItemMisc)
+dealloc(WFF_ItemMiscCode)
+WFF_ItemBattle:
+db 41 2B C2 89 42 04
+unregistersymbol(WFF_ItemBattle)
+dealloc(WFF_ItemBattleCode)
+unregistersymbol(WFF_ItemCFG)
+</AssemblerScript>
+          <Options moDeactivateChildrenAsWell="1" />
+          <CheatEntries>
+            <CheatEntry>
+              <ID>61</ID>
+              <Description>"Infinite Item Usage [Must own item; Test]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_ItemCFG+0:
+db 01
+[DISABLE]
+WFF_ItemCFG+0:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>62</ID>
+              <Description>"Never Below 1 Item When Used [Test]"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+WFF_ItemCFG+1:
+db 01
+[DISABLE]
+WFF_ItemCFG+1:
+db 00
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols />
+  <Comments>Original implementation. DrummerIX reference CT was read for context only; addresses and machine instructions were independently checked in the running game. No third-party scripts are embedded. Enable parent first. All features require gameplay testing. Disable children before parent, and disable everything before closing Cheat Engine. Gil changes remain after disabling. SP options share hooks and can be combined. XP and level changes become visible after battle, when back on the field. User confirmed foundation scripts work in gameplay on 2026-10-10. User also confirmed v3 God Mode and Infinite Battle AP work. User confirmed v4 damage and max-vitals options work. One-Hit Kill overrides the player multiplier; God Mode and Always Max override the enemy multiplier. Multipliers operate by target side, not attacker identity. Healing and zero-damage hits are not multiplied. Enable Always Max in battle; if party actors are rebuilt, retoggle it to rediscover them. Always Max does not revive KO actors; refilled values remain after disabling. v5 adds zero ability AP costs and two shared-hook item consumption modes; gameplay testing needed. Infinite Usage overrides Never Below 1. Item routines may also serve non-use inventory removal; disable item options for selling, crafting, or quest hand-ins until tested. Capture and Champion-cost features are not yet implemented.</Comments>
+</CheatTable>

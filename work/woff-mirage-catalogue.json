@@ -1,0 +1,3197 @@
+[
+  {
+    "id": 0,
+    "hex_id": "0000",
+    "key": "Player001",
+    "name": "Lann",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1,
+    "hex_id": "0001",
+    "key": "Player002",
+    "name": "Reynn",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1000,
+    "hex_id": "03E8",
+    "key": "Star001",
+    "name": "Warrior of Light",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1001,
+    "hex_id": "03E9",
+    "key": "Star002",
+    "name": "Passerby",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1002,
+    "hex_id": "03EA",
+    "key": "Star019",
+    "name": "Princess Sarah",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1003,
+    "hex_id": "03EB",
+    "key": "Star003",
+    "name": "Refia",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1004,
+    "hex_id": "03EC",
+    "key": "Star004",
+    "name": "Rydia",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1005,
+    "hex_id": "03ED",
+    "key": "Star005",
+    "name": "Bartz",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1006,
+    "hex_id": "03EE",
+    "key": "Star006",
+    "name": "Faris",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1007,
+    "hex_id": "03EF",
+    "key": "Star007",
+    "name": "Cloud",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1008,
+    "hex_id": "03F0",
+    "key": "Star008",
+    "name": "Squall",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1009,
+    "hex_id": "03F1",
+    "key": "Star009",
+    "name": "Terra",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1010,
+    "hex_id": "03F2",
+    "key": "Star040",
+    "name": "Terra",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1011,
+    "hex_id": "03F3",
+    "key": "Star010",
+    "name": "Vivi",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1012,
+    "hex_id": "03F4",
+    "key": "Star011",
+    "name": "Edgar",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1013,
+    "hex_id": "03F5",
+    "key": "Star012",
+    "name": "Eiko",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1014,
+    "hex_id": "03F6",
+    "key": "Star013",
+    "name": "Tidus",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1015,
+    "hex_id": "03F7",
+    "key": "Star014",
+    "name": "Yuna",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1016,
+    "hex_id": "03F8",
+    "key": "Star015",
+    "name": "Tifa",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1017,
+    "hex_id": "03F9",
+    "key": "Star016",
+    "name": "Chocolatte",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1018,
+    "hex_id": "03FA",
+    "key": "Star017",
+    "name": "Cid",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1019,
+    "hex_id": "03FB",
+    "key": "Star018",
+    "name": "Celes",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1020,
+    "hex_id": "03FC",
+    "key": "Star023",
+    "name": "Rikku",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1021,
+    "hex_id": "03FD",
+    "key": "Star024",
+    "name": "Shantotto",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1022,
+    "hex_id": "03FE",
+    "key": "Star027",
+    "name": "Snow",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1023,
+    "hex_id": "03FF",
+    "key": "Star030",
+    "name": "Sherlotta",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1024,
+    "hex_id": "0400",
+    "key": "Star037",
+    "name": "Quistis",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1025,
+    "hex_id": "0401",
+    "key": "Star038",
+    "name": "Shelke",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 1026,
+    "hex_id": "0402",
+    "key": "Star039",
+    "name": "Lightning",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2000,
+    "hex_id": "07D0",
+    "key": "AddStar001",
+    "name": "Sephiroth",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2001,
+    "hex_id": "07D1",
+    "key": "AddStar002",
+    "name": "Balthier",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2002,
+    "hex_id": "07D2",
+    "key": "AddStar003",
+    "name": "Sora",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2003,
+    "hex_id": "07D3",
+    "key": "AddStar004",
+    "name": "Noctis",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2004,
+    "hex_id": "07D4",
+    "key": "AddStar005",
+    "name": "Serah",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2005,
+    "hex_id": "07D5",
+    "key": "AddStar006",
+    "name": "Cecil",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2006,
+    "hex_id": "07D6",
+    "key": "AddStar007",
+    "name": "Zack",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2007,
+    "hex_id": "07D7",
+    "key": "AddStar008",
+    "name": "Lann",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2008,
+    "hex_id": "07D8",
+    "key": "AddStar009",
+    "name": "Firion",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 2009,
+    "hex_id": "07D9",
+    "key": "AddStar010",
+    "name": "Y'shtola",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3000,
+    "hex_id": "0BB8",
+    "key": "Chara001",
+    "name": "Enna Kros",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3001,
+    "hex_id": "0BB9",
+    "key": "Chara002",
+    "name": "Hauyn",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3002,
+    "hex_id": "0BBA",
+    "key": "Chara003",
+    "name": "Masked Woman",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3003,
+    "hex_id": "0BBB",
+    "key": "Chara005",
+    "name": "Hauyn",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3004,
+    "hex_id": "0BBC",
+    "key": "Chara006",
+    "name": "Lusse",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3005,
+    "hex_id": "0BBD",
+    "key": "Chara007",
+    "name": "Rorrik",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3006,
+    "hex_id": "0BBE",
+    "key": "Chara008",
+    "name": "Girl Who Forgot Her Name",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3007,
+    "hex_id": "0BBF",
+    "key": "Chara009",
+    "name": "Cat",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3008,
+    "hex_id": "0BC0",
+    "key": "Chara010",
+    "name": "Silver Toad",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3009,
+    "hex_id": "0BC1",
+    "key": "Chara011",
+    "name": "Shiva-Ixion",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 3010,
+    "hex_id": "0BC2",
+    "key": "Chara030",
+    "name": "Cactuar Conductor",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3011,
+    "hex_id": "0BC3",
+    "key": "Chara020",
+    "name": "Brandelis",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3012,
+    "hex_id": "0BC4",
+    "key": "Chara021",
+    "name": "King of Bahamut",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3013,
+    "hex_id": "0BC5",
+    "key": "Chara022",
+    "name": "Exnine Bahamut",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3014,
+    "hex_id": "0BC6",
+    "key": "Chara023",
+    "name": "Exnine Bahamut",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3015,
+    "hex_id": "0BC7",
+    "key": "Chara025",
+    "name": "Knight in the Golden Mask",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3016,
+    "hex_id": "0BC8",
+    "key": "Chara026",
+    "name": "Segwarides",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3017,
+    "hex_id": "0BC9",
+    "key": "Chara033",
+    "name": "Plumed Knight",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 3018,
+    "hex_id": "0BCA",
+    "key": "Chara034",
+    "name": "Pellinore",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5000,
+    "hex_id": "1388",
+    "key": "Npc001",
+    "name": "Village Man 1",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5001,
+    "hex_id": "1389",
+    "key": "Npc002",
+    "name": "Village Man 2",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5002,
+    "hex_id": "138A",
+    "key": "Npc003",
+    "name": "Village Man 3",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5003,
+    "hex_id": "138B",
+    "key": "Npc004",
+    "name": "Village Man 4",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5004,
+    "hex_id": "138C",
+    "key": "Npc005",
+    "name": "Village Woman 1",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5005,
+    "hex_id": "138D",
+    "key": "Npc006",
+    "name": "Village Woman 2",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5006,
+    "hex_id": "138E",
+    "key": "Npc007",
+    "name": "Village Woman 3",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5007,
+    "hex_id": "138F",
+    "key": "Npc008",
+    "name": "Village Woman 4",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5008,
+    "hex_id": "1390",
+    "key": "Npc009",
+    "name": "Soldier of Grymoire",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5009,
+    "hex_id": "1391",
+    "key": "Npc010",
+    "name": "Saronian Man 1",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5010,
+    "hex_id": "1392",
+    "key": "Npc011",
+    "name": "Saronian Man 2",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5011,
+    "hex_id": "1393",
+    "key": "Npc012",
+    "name": "Saronian Woman 1",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5012,
+    "hex_id": "1394",
+    "key": "Npc013",
+    "name": "Saronian Woman 2",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5013,
+    "hex_id": "1395",
+    "key": "Npc015",
+    "name": "Thane of Saronia",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5014,
+    "hex_id": "1396",
+    "key": "Npc020",
+    "name": "Male Zealot",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5015,
+    "hex_id": "1397",
+    "key": "Npc021",
+    "name": "Female Zealot",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5016,
+    "hex_id": "1398",
+    "key": "Npc022",
+    "name": "Desertgoer",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5017,
+    "hex_id": "1399",
+    "key": "Npc037",
+    "name": "Vampire Man",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5018,
+    "hex_id": "139A",
+    "key": "Npc038",
+    "name": "Vampire Woman",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5019,
+    "hex_id": "139B",
+    "key": "Npc041",
+    "name": "Provincial White Mage",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5020,
+    "hex_id": "139C",
+    "key": "Npc042",
+    "name": "Provincial Black Mage",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5021,
+    "hex_id": "139D",
+    "key": "Npc044",
+    "name": "Village Man (Palette Swap 1)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5022,
+    "hex_id": "139E",
+    "key": "Npc045",
+    "name": "Village Man (Palette Swap 2)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5023,
+    "hex_id": "139F",
+    "key": "Npc046",
+    "name": "Village Boy (Palette Swap 3)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5024,
+    "hex_id": "13A0",
+    "key": "Npc043",
+    "name": "Village Woman 5 (with Urn)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5025,
+    "hex_id": "13A1",
+    "key": "Npc048",
+    "name": "Village Girl (Palette Swap 5)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5026,
+    "hex_id": "13A2",
+    "key": "Npc049",
+    "name": "Village Woman (Unique)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5027,
+    "hex_id": "13A3",
+    "key": "Npc050",
+    "name": "Soldier of Grymoire (Palette Swap 1)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5028,
+    "hex_id": "13A4",
+    "key": "Npc051",
+    "name": "Soldier of Grymoire (Palette Swap 2)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5029,
+    "hex_id": "13A5",
+    "key": "Npc052",
+    "name": "Soldier of Grymoire (Palette Swap 3)",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5030,
+    "hex_id": "13A6",
+    "key": "Npc053",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": false
+  },
+  {
+    "id": 5031,
+    "hex_id": "13A7",
+    "key": "Npc054",
+    "name": "Man in Rags",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5032,
+    "hex_id": "13A8",
+    "key": "Npc055",
+    "name": "Man in Rags",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 5033,
+    "hex_id": "13A9",
+    "key": "Npc056",
+    "name": "Soldier of Grymoire",
+    "library_listed": false,
+    "status": "NON-MIRAGE CHARACTER: not a verified ownership candidate",
+    "candidate": false
+  },
+  {
+    "id": 7000,
+    "hex_id": "1B58",
+    "key": "Monster001_01",
+    "name": "Tama",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7001,
+    "hex_id": "1B59",
+    "key": "Monster001_02",
+    "name": "Kyubi",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7002,
+    "hex_id": "1B5A",
+    "key": "Monster001_11",
+    "name": "Yurugu",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7003,
+    "hex_id": "1B5B",
+    "key": "Monster001_12",
+    "name": "Tamamohimé",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7004,
+    "hex_id": "1B5C",
+    "key": "Monster002_01",
+    "name": "Fritt",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7005,
+    "hex_id": "1B5D",
+    "key": "Monster002_02",
+    "name": "Affrite",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7006,
+    "hex_id": "1B5E",
+    "key": "Monster002_03",
+    "name": "Ifrit",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7007,
+    "hex_id": "1B5F",
+    "key": "Monster002_05",
+    "name": "Ifreeta",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7008,
+    "hex_id": "1B60",
+    "key": "Monster002_11",
+    "name": "Weeglee",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7009,
+    "hex_id": "1B61",
+    "key": "Monster002_12",
+    "name": "Gleed",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7010,
+    "hex_id": "1B62",
+    "key": "Monster002_13",
+    "name": "Gleefrit",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7011,
+    "hex_id": "1B63",
+    "key": "Monster003_01",
+    "name": "Bablizz",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7012,
+    "hex_id": "1B64",
+    "key": "Monster003_02",
+    "name": "Mishiva",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7013,
+    "hex_id": "1B65",
+    "key": "Monster003_03",
+    "name": "Shiva",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7014,
+    "hex_id": "1B66",
+    "key": "Monster003_05",
+    "name": "Shivalry",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7015,
+    "hex_id": "1B67",
+    "key": "Monster003_11",
+    "name": "Brrblizz",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7016,
+    "hex_id": "1B68",
+    "key": "Monster003_12",
+    "name": "Shivverina",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7017,
+    "hex_id": "1B69",
+    "key": "Monster003_13",
+    "name": "Shivver",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7018,
+    "hex_id": "1B6A",
+    "key": "Monster004_01",
+    "name": "Zapt",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7019,
+    "hex_id": "1B6B",
+    "key": "Monster004_02",
+    "name": "Zaphr",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7020,
+    "hex_id": "1B6C",
+    "key": "Monster004_03",
+    "name": "Ramuh",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7021,
+    "hex_id": "1B6D",
+    "key": "Monster004_05",
+    "name": "Ramewl",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7022,
+    "hex_id": "1B6E",
+    "key": "Monster004_11",
+    "name": "Joult",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7023,
+    "hex_id": "1B6F",
+    "key": "Monster004_12",
+    "name": "Voultr",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7024,
+    "hex_id": "1B70",
+    "key": "Monster004_13",
+    "name": "Rairamuh",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7025,
+    "hex_id": "1B71",
+    "key": "Monster005_01",
+    "name": "Goblin",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7026,
+    "hex_id": "1B72",
+    "key": "Monster005_02",
+    "name": "Goblin Guard",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7027,
+    "hex_id": "1B73",
+    "key": "Monster005_03",
+    "name": "Giant Goblin",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7028,
+    "hex_id": "1B74",
+    "key": "Monster005_04",
+    "name": "Princess Goblin",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7029,
+    "hex_id": "1B75",
+    "key": "Monster005_11",
+    "name": "Red Cap",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7030,
+    "hex_id": "1B76",
+    "key": "Monster005_12",
+    "name": "Red Captain",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7031,
+    "hex_id": "1B77",
+    "key": "Monster006_01",
+    "name": "Chocochick",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7032,
+    "hex_id": "1B78",
+    "key": "Monster006_02",
+    "name": "Chocobo",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7033,
+    "hex_id": "1B79",
+    "key": "Monster006_05",
+    "name": "Mecha Chocobo",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7034,
+    "hex_id": "1B7A",
+    "key": "Monster006_11",
+    "name": "Black Chocochick",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7035,
+    "hex_id": "1B7B",
+    "key": "Monster006_12",
+    "name": "Hyperion",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7036,
+    "hex_id": "1B7C",
+    "key": "Monster007_01",
+    "name": "White Nakk",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7037,
+    "hex_id": "1B7D",
+    "key": "Monster007_03",
+    "name": "Fenrir",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7038,
+    "hex_id": "1B7E",
+    "key": "Monster007_04",
+    "name": "Cerberus",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7039,
+    "hex_id": "1B7F",
+    "key": "Monster007_11",
+    "name": "Black Nakk",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7040,
+    "hex_id": "1B80",
+    "key": "Monster007_13",
+    "name": "Elefenrir",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7041,
+    "hex_id": "1B81",
+    "key": "Monster007_23",
+    "name": "Grandfenrir",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7042,
+    "hex_id": "1B82",
+    "key": "Monster008_01",
+    "name": "Babyhemoth",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7043,
+    "hex_id": "1B83",
+    "key": "Monster008_03",
+    "name": "Behemoth",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7044,
+    "hex_id": "1B84",
+    "key": "Monster008_04",
+    "name": "Behemonster",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7045,
+    "hex_id": "1B85",
+    "key": "Monster008_11",
+    "name": "Kuza Kit",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7046,
+    "hex_id": "1B86",
+    "key": "Monster008_13",
+    "name": "Kuza Beast",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7047,
+    "hex_id": "1B87",
+    "key": "Monster009_01",
+    "name": "Quacho",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7048,
+    "hex_id": "1B88",
+    "key": "Monster009_02",
+    "name": "Quacho Queen",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7049,
+    "hex_id": "1B89",
+    "key": "Monster009_11",
+    "name": "Quachacho",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7050,
+    "hex_id": "1B8A",
+    "key": "Monster010_01",
+    "name": "Moogle",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7051,
+    "hex_id": "1B8B",
+    "key": "Monster010_02",
+    "name": "Kupirate",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7052,
+    "hex_id": "1B8C",
+    "key": "Monster010_11",
+    "name": "Glow Moogle",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7053,
+    "hex_id": "1B8D",
+    "key": "Monster010_12",
+    "name": "Kupicaroon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7054,
+    "hex_id": "1B8E",
+    "key": "Monster011_01",
+    "name": "Sharqual",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7055,
+    "hex_id": "1B8F",
+    "key": "Monster011_02",
+    "name": "Mega Sharqual",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7056,
+    "hex_id": "1B90",
+    "key": "Monster011_03",
+    "name": "Bismarck",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7057,
+    "hex_id": "1B91",
+    "key": "Monster011_11",
+    "name": "Nightsqual",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7058,
+    "hex_id": "1B92",
+    "key": "Monster011_12",
+    "name": "Mega Nightsqual",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7059,
+    "hex_id": "1B93",
+    "key": "Monster012_01",
+    "name": "Baby Tonberry",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7060,
+    "hex_id": "1B94",
+    "key": "Monster012_02",
+    "name": "Tonberry",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7061,
+    "hex_id": "1B95",
+    "key": "Monster012_03",
+    "name": "Tonberry King",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7062,
+    "hex_id": "1B96",
+    "key": "Monster012_11",
+    "name": "Baby Paleberry",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7063,
+    "hex_id": "1B97",
+    "key": "Monster012_12",
+    "name": "Paleberry",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7064,
+    "hex_id": "1B98",
+    "key": "Monster012_13",
+    "name": "Paleberry King",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7065,
+    "hex_id": "1B99",
+    "key": "Monster013_01",
+    "name": "Deathskull",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7066,
+    "hex_id": "1B9A",
+    "key": "Monster013_04",
+    "name": "Undead Princess",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7067,
+    "hex_id": "1B9B",
+    "key": "Monster013_11",
+    "name": "Mordskull",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7068,
+    "hex_id": "1B9C",
+    "key": "Monster016_01",
+    "name": "Copper Gnome",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7069,
+    "hex_id": "1B9D",
+    "key": "Monster016_03",
+    "name": "Mythril Giant",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7070,
+    "hex_id": "1B9E",
+    "key": "Monster016_04",
+    "name": "Iron Giant",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7071,
+    "hex_id": "1B9F",
+    "key": "Monster016_11",
+    "name": "Lead Gnome",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7072,
+    "hex_id": "1BA0",
+    "key": "Monster016_13",
+    "name": "Chrome Giant",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7073,
+    "hex_id": "1BA1",
+    "key": "Monster017_01",
+    "name": "Mu",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7074,
+    "hex_id": "1BA2",
+    "key": "Monster017_02",
+    "name": "Skull Eater",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7075,
+    "hex_id": "1BA3",
+    "key": "Monster017_03",
+    "name": "Carbuncle",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7076,
+    "hex_id": "1BA4",
+    "key": "Monster017_11",
+    "name": "Reaver Mu",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7077,
+    "hex_id": "1BA5",
+    "key": "Monster017_12",
+    "name": "Nut Eater",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7078,
+    "hex_id": "1BA6",
+    "key": "Monster017_13",
+    "name": "Topaz Carbuncle",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7079,
+    "hex_id": "1BA7",
+    "key": "Monster018_01",
+    "name": "Sea Snake",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7080,
+    "hex_id": "1BA8",
+    "key": "Monster018_03",
+    "name": "Syldra",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7081,
+    "hex_id": "1BA9",
+    "key": "Monster018_13",
+    "name": "Elasmos",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7082,
+    "hex_id": "1BAA",
+    "key": "Monster018_05",
+    "name": "Leviathan",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7083,
+    "hex_id": "1BAB",
+    "key": "Monster018_11",
+    "name": "Sea Serpent",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7084,
+    "hex_id": "1BAC",
+    "key": "Monster019_01",
+    "name": "Minimantoise",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7085,
+    "hex_id": "1BAD",
+    "key": "Monster019_03",
+    "name": "Adamantoise",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7086,
+    "hex_id": "1BAE",
+    "key": "Monster019_04",
+    "name": "Addy the Adamantoise",
+    "library_listed": false,
+    "status": "EXPERIMENTAL: outside Mirage library; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 7087,
+    "hex_id": "1BAF",
+    "key": "Monster019_11",
+    "name": "Flammantoise",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7088,
+    "hex_id": "1BB0",
+    "key": "Monster020_01",
+    "name": "Brothertaur",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7089,
+    "hex_id": "1BB1",
+    "key": "Monster020_02",
+    "name": "Minotaur",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7090,
+    "hex_id": "1BB2",
+    "key": "Monster020_11",
+    "name": "Sistertaur",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7091,
+    "hex_id": "1BB3",
+    "key": "Monster020_12",
+    "name": "Asterius",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7092,
+    "hex_id": "1BB4",
+    "key": "Monster021_01",
+    "name": "Water Toad",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7093,
+    "hex_id": "1BB5",
+    "key": "Monster021_02",
+    "name": "Lucky Toad",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7094,
+    "hex_id": "1BB6",
+    "key": "Monster021_11",
+    "name": "Wind Toad",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7095,
+    "hex_id": "1BB7",
+    "key": "Monster023_01",
+    "name": "Werebat",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7096,
+    "hex_id": "1BB8",
+    "key": "Monster023_02",
+    "name": "Vampire",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7097,
+    "hex_id": "1BB9",
+    "key": "Monster023_04",
+    "name": "Vampire Prime",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7098,
+    "hex_id": "1BBA",
+    "key": "Monster023_11",
+    "name": "Ice Bat",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7099,
+    "hex_id": "1BBB",
+    "key": "Monster023_12",
+    "name": "Demivampire",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7100,
+    "hex_id": "1BBC",
+    "key": "Monster024_01",
+    "name": "Mimic",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7101,
+    "hex_id": "1BBD",
+    "key": "Monster024_02",
+    "name": "Magic Pot",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7102,
+    "hex_id": "1BBE",
+    "key": "Monster024_03",
+    "name": "Mimic Queen",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7103,
+    "hex_id": "1BBF",
+    "key": "Monster024_11",
+    "name": "Mimic Jackpot",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7104,
+    "hex_id": "1BC0",
+    "key": "Monster024_12",
+    "name": "Magic Jar",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7105,
+    "hex_id": "1BC1",
+    "key": "Monster025_02",
+    "name": "Sand Worm",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7106,
+    "hex_id": "1BC2",
+    "key": "Monster025_12",
+    "name": "Sea Worm",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7107,
+    "hex_id": "1BC3",
+    "key": "Monster027_01",
+    "name": "Right Claw",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7108,
+    "hex_id": "1BC4",
+    "key": "Monster027_11",
+    "name": "Left Claw",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7109,
+    "hex_id": "1BC5",
+    "key": "Monster031_02",
+    "name": "Bomb",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7110,
+    "hex_id": "1BC6",
+    "key": "Monster031_04",
+    "name": "King Bomb",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7111,
+    "hex_id": "1BC7",
+    "key": "Monster031_12",
+    "name": "Bombino",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7112,
+    "hex_id": "1BC8",
+    "key": "Monster032_02",
+    "name": "Flan",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7113,
+    "hex_id": "1BC9",
+    "key": "Monster032_04",
+    "name": "Golden Flan",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7114,
+    "hex_id": "1BCA",
+    "key": "Monster032_05",
+    "name": "Flan Princess",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7115,
+    "hex_id": "1BCB",
+    "key": "Monster032_12",
+    "name": "Mini Flan",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7116,
+    "hex_id": "1BCC",
+    "key": "Monster032_15",
+    "name": "Kaguya Flan",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7117,
+    "hex_id": "1BCD",
+    "key": "Monster033_01",
+    "name": "Mandragora",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7118,
+    "hex_id": "1BCE",
+    "key": "Monster033_03",
+    "name": "Malboro",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7119,
+    "hex_id": "1BCF",
+    "key": "Monster033_11",
+    "name": "Korrigan",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7120,
+    "hex_id": "1BD0",
+    "key": "Monster033_13",
+    "name": "Malboro Menace",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7121,
+    "hex_id": "1BD1",
+    "key": "Monster034_01",
+    "name": "Manticore",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7122,
+    "hex_id": "1BD2",
+    "key": "Monster034_03",
+    "name": "Sphinx",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7123,
+    "hex_id": "1BD3",
+    "key": "Monster034_11",
+    "name": "Sandicore",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7124,
+    "hex_id": "1BD4",
+    "key": "Monster034_13",
+    "name": "Memecoleous",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7125,
+    "hex_id": "1BD5",
+    "key": "Monster035_02",
+    "name": "Unicorn",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7126,
+    "hex_id": "1BD6",
+    "key": "Monster035_04",
+    "name": "Odin",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7127,
+    "hex_id": "1BD7",
+    "key": "Monster035_12",
+    "name": "Nightmare",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7128,
+    "hex_id": "1BD8",
+    "key": "Monster036_01",
+    "name": "Cockatrice",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7129,
+    "hex_id": "1BD9",
+    "key": "Monster036_02",
+    "name": "Valefor",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7130,
+    "hex_id": "1BDA",
+    "key": "Monster036_03",
+    "name": "Phoenix",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7131,
+    "hex_id": "1BDB",
+    "key": "Monster036_11",
+    "name": "Cocadrille",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7132,
+    "hex_id": "1BDC",
+    "key": "Monster036_12",
+    "name": "Nirvalefor",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7133,
+    "hex_id": "1BDD",
+    "key": "Monster036_13",
+    "name": "Iris",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7134,
+    "hex_id": "1BDE",
+    "key": "Monster037_04",
+    "name": "Bahamut",
+    "library_listed": false,
+    "status": "EXPERIMENTAL: outside Mirage library; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 7135,
+    "hex_id": "1BDF",
+    "key": "Monster038_01",
+    "name": "Floating Eye",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7136,
+    "hex_id": "1BE0",
+    "key": "Monster038_03",
+    "name": "Ahriman",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7137,
+    "hex_id": "1BE1",
+    "key": "Monster038_11",
+    "name": "Blood Eye",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7138,
+    "hex_id": "1BE2",
+    "key": "Monster038_13",
+    "name": "Buer",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7139,
+    "hex_id": "1BE3",
+    "key": "Monster039_01",
+    "name": "Dualizard",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7140,
+    "hex_id": "1BE4",
+    "key": "Monster039_02",
+    "name": "Trihyde",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7141,
+    "hex_id": "1BE5",
+    "key": "Monster039_03",
+    "name": "Tiamat",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7142,
+    "hex_id": "1BE6",
+    "key": "Monster039_11",
+    "name": "Bihydra",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7143,
+    "hex_id": "1BE7",
+    "key": "Monster039_12",
+    "name": "Ghidra",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7144,
+    "hex_id": "1BE8",
+    "key": "Monster039_13",
+    "name": "Nidhogg",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7145,
+    "hex_id": "1BE9",
+    "key": "Monster040_01",
+    "name": "Entom Guard",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7146,
+    "hex_id": "1BEA",
+    "key": "Monster040_03",
+    "name": "Omega",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7147,
+    "hex_id": "1BEB",
+    "key": "Monster040_11",
+    "name": "Entom Soldier",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7148,
+    "hex_id": "1BEC",
+    "key": "Monster040_13",
+    "name": "Omega Bane",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7149,
+    "hex_id": "1BED",
+    "key": "Monster041_01",
+    "name": "Serafie",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7150,
+    "hex_id": "1BEE",
+    "key": "Monster041_03",
+    "name": "Siren",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7151,
+    "hex_id": "1BEF",
+    "key": "Monster041_11",
+    "name": "Sylph",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7152,
+    "hex_id": "1BF0",
+    "key": "Monster041_13",
+    "name": "Diva Serafie",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7153,
+    "hex_id": "1BF1",
+    "key": "Monster042_01",
+    "name": "Imp",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7154,
+    "hex_id": "1BF2",
+    "key": "Monster042_03",
+    "name": "Diabolos",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7155,
+    "hex_id": "1BF3",
+    "key": "Monster042_11",
+    "name": "Garchimacera",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7156,
+    "hex_id": "1BF4",
+    "key": "Monster044_01",
+    "name": "Mindflayer",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7157,
+    "hex_id": "1BF5",
+    "key": "Monster044_03",
+    "name": "Kraken",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7158,
+    "hex_id": "1BF6",
+    "key": "Monster044_04",
+    "name": "Ultros",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7159,
+    "hex_id": "1BF7",
+    "key": "Monster044_11",
+    "name": "Squidraken",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7160,
+    "hex_id": "1BF8",
+    "key": "Monster044_13",
+    "name": "Cenchos",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7161,
+    "hex_id": "1BF9",
+    "key": "Monster045_02",
+    "name": "Red Dragon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7162,
+    "hex_id": "1BFA",
+    "key": "Monster045_03",
+    "name": "Mega Red Dragon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7163,
+    "hex_id": "1BFB",
+    "key": "Monster046_02",
+    "name": "Mist Dragon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7164,
+    "hex_id": "1BFC",
+    "key": "Monster046_03",
+    "name": "Holy Dragon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7165,
+    "hex_id": "1BFD",
+    "key": "Monster046_12",
+    "name": "Spark Dragon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7166,
+    "hex_id": "1BFE",
+    "key": "Monster016_02",
+    "name": "Mini Golem",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7167,
+    "hex_id": "1BFF",
+    "key": "Monster016_12",
+    "name": "Water Golem",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7168,
+    "hex_id": "1C00",
+    "key": "Monster049_01",
+    "name": "Enkidu",
+    "library_listed": false,
+    "status": "EXPERIMENTAL: outside Mirage library; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 7169,
+    "hex_id": "1C01",
+    "key": "Monster049_02",
+    "name": "Gilgamesh",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7170,
+    "hex_id": "1C02",
+    "key": "Monster051_07",
+    "name": "Searcher",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7171,
+    "hex_id": "1C03",
+    "key": "Monster051_01",
+    "name": "Magitek Armor",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7172,
+    "hex_id": "1C04",
+    "key": "Monster051_02",
+    "name": "Magitek Armor B",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7173,
+    "hex_id": "1C05",
+    "key": "Monster051_03",
+    "name": "Death Machine",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7174,
+    "hex_id": "1C06",
+    "key": "Monster051_04",
+    "name": "Einhänder",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7175,
+    "hex_id": "1C07",
+    "key": "Monster051_05",
+    "name": "Omega God",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7176,
+    "hex_id": "1C08",
+    "key": "Monster051_06",
+    "name": "XG",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7177,
+    "hex_id": "1C09",
+    "key": "Monster051_17",
+    "name": "Security Eye",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7178,
+    "hex_id": "1C0A",
+    "key": "Monster051_11",
+    "name": "Magitek Armor A",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7179,
+    "hex_id": "1C0B",
+    "key": "Monster051_13",
+    "name": "War Machine",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7180,
+    "hex_id": "1C0C",
+    "key": "Monster051_14",
+    "name": "Astraea",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7181,
+    "hex_id": "1C0D",
+    "key": "Monster052_01",
+    "name": "Magna Roader",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7182,
+    "hex_id": "1C0E",
+    "key": "Monster052_11",
+    "name": "Magna Roader",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7183,
+    "hex_id": "1C0F",
+    "key": "Monster053_01",
+    "name": "Cactuar",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7184,
+    "hex_id": "1C10",
+    "key": "Monster053_02",
+    "name": "Gigantuar",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7185,
+    "hex_id": "1C11",
+    "key": "Monster053_11",
+    "name": "Cactrot",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7186,
+    "hex_id": "1C12",
+    "key": "Monster053_12",
+    "name": "Gigantrot",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7187,
+    "hex_id": "1C13",
+    "key": "Monster055_01",
+    "name": "Titan",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7188,
+    "hex_id": "1C14",
+    "key": "Monster055_04",
+    "name": "Maduin",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7189,
+    "hex_id": "1C15",
+    "key": "Monster055_11",
+    "name": "Iron Muscles",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7190,
+    "hex_id": "1C16",
+    "key": "Monster056_02",
+    "name": "Ultima Weapon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7191,
+    "hex_id": "1C17",
+    "key": "Monster056_12",
+    "name": "Supraltima Weapon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7192,
+    "hex_id": "1C18",
+    "key": "Monster061_01",
+    "name": "Black Mage",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7193,
+    "hex_id": "1C19",
+    "key": "Monster070_01",
+    "name": "Bahamutian Soldier",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7194,
+    "hex_id": "1C1A",
+    "key": "Monster070_02",
+    "name": "Bahamutian Commander",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7195,
+    "hex_id": "1C1B",
+    "key": "Monster070_03",
+    "name": "Federation Guard",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7196,
+    "hex_id": "1C1C",
+    "key": "Monster013_21",
+    "name": "Metalliskull",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7197,
+    "hex_id": "1C1D",
+    "key": "Monster016_21",
+    "name": "Golem Head",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7198,
+    "hex_id": "1C1E",
+    "key": "Monster052_21",
+    "name": "Magna Roader",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7199,
+    "hex_id": "1C1F",
+    "key": "Monster040_21",
+    "name": "Elite Entom",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7200,
+    "hex_id": "1C20",
+    "key": "Monster051_27",
+    "name": "Death Searcher",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7201,
+    "hex_id": "1C21",
+    "key": "Monster010_21",
+    "name": "Master Moogle",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7202,
+    "hex_id": "1C22",
+    "key": "Monster053_21",
+    "name": "Master Cactuar",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7203,
+    "hex_id": "1C23",
+    "key": "Monster012_22",
+    "name": "Master Tonberry",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7204,
+    "hex_id": "1C24",
+    "key": "Monster006_21",
+    "name": "Chocochick★",
+    "library_listed": false,
+    "status": "EXPERIMENTAL: outside Mirage library; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 7205,
+    "hex_id": "1C25",
+    "key": "Monster006_45",
+    "name": "Mecha Chocobo★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7206,
+    "hex_id": "1C26",
+    "key": "Monster006_32",
+    "name": "Boko",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7207,
+    "hex_id": "1C27",
+    "key": "Monster002_23",
+    "name": "Ifrit★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7208,
+    "hex_id": "1C28",
+    "key": "Monster002_35",
+    "name": "Ifreeta★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7209,
+    "hex_id": "1C29",
+    "key": "Monster003_03_n01",
+    "name": "Shiva★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7210,
+    "hex_id": "1C2A",
+    "key": "Monster003_05_n01",
+    "name": "Shivalry★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7211,
+    "hex_id": "1C2B",
+    "key": "Monster004_03_n01",
+    "name": "Ramuh★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7212,
+    "hex_id": "1C2C",
+    "key": "Monster004_05_n01",
+    "name": "Ramewl★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7213,
+    "hex_id": "1C2D",
+    "key": "Monster018_05_n01",
+    "name": "Leviathan★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7214,
+    "hex_id": "1C2E",
+    "key": "Monster037_04_n01",
+    "name": "Bahamut★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7215,
+    "hex_id": "1C2F",
+    "key": "Monster035_04_n01",
+    "name": "Odin★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7216,
+    "hex_id": "1C30",
+    "key": "Monster042_03_n01",
+    "name": "Diabolos★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7217,
+    "hex_id": "1C31",
+    "key": "Monster009_02_n01",
+    "name": "Quacho Queen★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7218,
+    "hex_id": "1C32",
+    "key": "Monster009_01_n01",
+    "name": "Miney",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7219,
+    "hex_id": "1C33",
+    "key": "Monster009_01_n02",
+    "name": "Mo",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7220,
+    "hex_id": "1C34",
+    "key": "Monster005_04_n01",
+    "name": "Princess Goblin★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7221,
+    "hex_id": "1C35",
+    "key": "Monster044_04_n01",
+    "name": "Ultros★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 7222,
+    "hex_id": "1C36",
+    "key": "Monster013_04_n01",
+    "name": "Undead Princess★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8000,
+    "hex_id": "1F40",
+    "key": "AddMonster001",
+    "name": "Cactuar Johnny",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8001,
+    "hex_id": "1F41",
+    "key": "AddMonster002",
+    "name": "White Chocobo",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8002,
+    "hex_id": "1F42",
+    "key": "AddMonster003",
+    "name": "Red Bonnetberry",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8003,
+    "hex_id": "1F43",
+    "key": "AddMonster004",
+    "name": "Kobold Mimic",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8004,
+    "hex_id": "1F44",
+    "key": "AddMonster005",
+    "name": "Dark Behemoth",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8005,
+    "hex_id": "1F45",
+    "key": "AddMonster006",
+    "name": "Sky Dragon",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8006,
+    "hex_id": "1F46",
+    "key": "AddMonster007",
+    "name": "Crimson Armor",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8007,
+    "hex_id": "1F47",
+    "key": "AddMonster008",
+    "name": "Magitek Armor P",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8008,
+    "hex_id": "1F48",
+    "key": "AddMonster009",
+    "name": "2P Tama",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8009,
+    "hex_id": "1F49",
+    "key": "AddMonster010",
+    "name": "2P Serafie",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8010,
+    "hex_id": "1F4A",
+    "key": "AddMonster011",
+    "name": "NOT USED",
+    "library_listed": true,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8011,
+    "hex_id": "1F4B",
+    "key": "AddMonster012",
+    "name": "Mecha Choco",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8012,
+    "hex_id": "1F4C",
+    "key": "AddMonster013",
+    "name": "Mel",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8013,
+    "hex_id": "1F4D",
+    "key": "AddMonster014",
+    "name": "Ponini",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8014,
+    "hex_id": "1F4E",
+    "key": "AddMonster015",
+    "name": "Dramut",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8015,
+    "hex_id": "1F4F",
+    "key": "AddMonster016",
+    "name": "Sylphine",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8016,
+    "hex_id": "1F50",
+    "key": "AddMonster017",
+    "name": "Devil Wolf",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8017,
+    "hex_id": "1F51",
+    "key": "AddMonster018",
+    "name": "Marilith",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8018,
+    "hex_id": "1F52",
+    "key": "AddMonster019",
+    "name": "Lich",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8019,
+    "hex_id": "1F53",
+    "key": "AddMonster020",
+    "name": "Largebuncle",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8020,
+    "hex_id": "1F54",
+    "key": "AddMonster021",
+    "name": "Lesser Coeurl",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8021,
+    "hex_id": "1F55",
+    "key": "AddMonster022",
+    "name": "Coeurl",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8022,
+    "hex_id": "1F56",
+    "key": "AddMonster023",
+    "name": "Moomba",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8023,
+    "hex_id": "1F57",
+    "key": "AddMonster024",
+    "name": "Daigoro",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8024,
+    "hex_id": "1F58",
+    "key": "AddMonster025",
+    "name": "Gamit",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8025,
+    "hex_id": "1F59",
+    "key": "AddMonster026",
+    "name": "The Immortal Dark Dragon",
+    "library_listed": false,
+    "status": "EXPERIMENTAL: outside Mirage library; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8026,
+    "hex_id": "1F5A",
+    "key": "AddMonster027",
+    "name": "Syldra★",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8027,
+    "hex_id": "1F5B",
+    "key": "AddMonster028",
+    "name": "Yojimbo",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8028,
+    "hex_id": "1F5C",
+    "key": "AddMonster029",
+    "name": "Garland",
+    "library_listed": true,
+    "status": "library-listed; ownership untested",
+    "candidate": true
+  },
+  {
+    "id": 8029,
+    "hex_id": "1F5D",
+    "key": "AddMonster030",
+    "name": "Fritt",
+    "library_listed": false,
+    "status": "TEST DEFINITION: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8030,
+    "hex_id": "1F5E",
+    "key": "AddMonster031",
+    "name": "Bablizz",
+    "library_listed": false,
+    "status": "TEST DEFINITION: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8031,
+    "hex_id": "1F5F",
+    "key": "AddMonster032",
+    "name": "Zapt",
+    "library_listed": false,
+    "status": "TEST DEFINITION: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8032,
+    "hex_id": "1F60",
+    "key": "AddMonster033",
+    "name": "The Immortal Dark Dragon",
+    "library_listed": false,
+    "status": "EXPERIMENTAL: outside Mirage library; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8033,
+    "hex_id": "1F61",
+    "key": "AddMonster034",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8034,
+    "hex_id": "1F62",
+    "key": "AddMonster035",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8035,
+    "hex_id": "1F63",
+    "key": "AddMonster036",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8036,
+    "hex_id": "1F64",
+    "key": "AddMonster037",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8037,
+    "hex_id": "1F65",
+    "key": "AddMonster038",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8038,
+    "hex_id": "1F66",
+    "key": "AddMonster039",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  },
+  {
+    "id": 8039,
+    "hex_id": "1F67",
+    "key": "AddMonster040",
+    "name": "NOT USED",
+    "library_listed": false,
+    "status": "UNUSED LABEL: experimental; ownership unverified",
+    "candidate": true
+  }
+]

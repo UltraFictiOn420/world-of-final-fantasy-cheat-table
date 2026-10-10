@@ -14,5 +14,11 @@
 | v11 | Field Save Anywhere; disable-time bug later fixed; DO NOT USE |
 | v12 | Save disable resolution repaired; off/on/off checked; Goblin replacement confirmed |
 | v13 | Clean current snapshot, updated validation notes, trace-free source backup and organized repository; gameplay hooks unchanged |
+| v14 | Experimental positive-chance defeated-enemy loot-roll override; no quantity multiplier |
+| v15 | Party buffs/status options, Always Critical and party stack-balance protection |
+| v16 | Reversible party-only normal-accuracy override; gameplay testing pending |
+| v17 | Initial stacked-member buff propagation repair; superseded by v18 |
+| v18 | Scoped native/UI encounter capture permission for library Mirages; Behemoth captured; member status propagation/classes and Protect/Shell duration counters repaired |
+| v19 | Original game-thread one-shot enemy topple, F8 then Defend before enemy turn; Mini Golem/Copper Gnome confirmed; clearer usage notes |
 
-Old versions are archival snapshots only. Use v13. The capture catalogue remains experimental; pending features are not promoted to completed.
+Old versions are archival snapshots only. Use v19. The capture catalogue and TEST-labelled features remain experimental; pending features are not promoted to completed.

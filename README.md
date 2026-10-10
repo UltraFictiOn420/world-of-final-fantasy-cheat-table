@@ -1,10 +1,12 @@
 # World of Final Fantasy — Original Cheat Table
 
-Steam/PC, developed with UltraFictiOn420 and AI assistance. Current version: **v13** (2026-10-10). This is an ongoing project, not a universally tested final release.
+Steam/PC, developed with UltraFictiOn420 and AI assistance. Current version: **v19** (2026-10-10). This is an ongoing project, not a universally tested final release.
 
 ## Start here
 
-Download [the current table](outputs/World%20of%20Final%20Fantasy%20-%20Original%20v13.CT), open it in Cheat Engine, attach to `WOFF.exe`, load your game, and enable the **Enable First** parent. Then enable only the features you need. Back up saves and use a separate slot for experimental changes. Disable child scripts before the parent and before closing Cheat Engine.
+Download [the current table](outputs/World%20of%20Final%20Fantasy%20-%20Original%20v19.CT), open it in Cheat Engine, attach to `WOFF.exe`, load your game, and enable the **Enable First** parent. Then enable only the features you need. Back up saves and use a separate slot for experimental changes. Disable child scripts before the parent and before closing Cheat Engine. Do not load two table versions together.
+
+Latest highlights: Behemoth capture permission fixed; stacked-member buffs repaired; enemy stack topple added. **Topple: enable its entry, press F8, then immediately choose Defend just before the enemy's turn.** The command menu can pause the updates that process it. One enemy stack per press; requests expire after three seconds.
 
 Verified executable: Windows x64 `WOFF.exe`, version 2.0.0.0, PE timestamp `5B9B7E76`. Other builds are not certified. The table checks this timestamp and hook bytes; a match is not a guarantee of universal compatibility.
 
@@ -17,10 +19,16 @@ Verified executable: Windows x64 `WOFF.exe`, version 2.0.0.0, PE timestamp `5B9B
 | Battle survival | God Mode; always max HP/AP for living party; infinite AP | User-tested; not status immunity or revival |
 | Battle damage | One-hit kill; player and enemy damage multipliers | User-tested |
 | Costs / inventory | Zero ability AP cost; infinite item usage; never below one item | User-tested in battle and field; must own item |
-| Capture | Easy Imprism with condition/chance and Prism bypass | Mu and Chocochick tested; native eligibility remains |
+| Capture | Easy Imprism with conditions/chance, Prism bypass and library-Mirage encounter permission | Mu, Chocochick and Behemoth captured; story caution; other native gates remain |
 | Capture replacement | One-shot species dropdown; protected information rows | Experimental; Mu → Chocochick and Mu → Goblin ownership confirmed |
 | Field utility | Save Anywhere through field menu | Saved and reloaded successfully; disable fixed in v12 |
-| Pending | Champion cost zero; instant enemy unstack | Not implemented; appropriate test situations still needed |
+| Battle critical | Always Critical | User-confirmed; critical-capable attacks only |
+| Party statuses | Haste, Regen, Protect/Shell, positive-duration protection, block negative statuses | Revised native stack/member propagation verified in memory; broader gameplay tests pending |
+| Battle accuracy | Never Miss | Implemented; normal party accuracy checks only; gameplay confirmation pending |
+| Party stacks | Stacks Never Topple | Implemented; balance protection; gameplay confirmation pending |
+| Enemy stacks | F8 Topple One Enemy Stack | User-confirmed Mini Golem/Copper Gnome; F8 then Defend before enemy turn |
+| Battle rewards | Guaranteed Enemy Loot Rolls | TEST; positive-chance drops only; observed Mu loot not enough to establish broad effectiveness |
+| Pending | Champion cost zero; richer loot/quantity options | Not implemented |
 
 ## Organized project map
 
@@ -35,6 +43,6 @@ The reference DrummerIX table was used for context, not redistributed. No game e
 
 ## Development
 
-Python 3: `python work/build_woff_table.py`, then `python work/test_woff_table.py`. The 17 structural checks require no game and do not enable cheats. Optional catalogue validation needs your installed game; optional live checks need Windows, `pefile`, and a clean unpatched process. `ue3_inspect.py` is a developer memory helper capable of writes; ordinary users do not need to run it.
+Python 3: `python work/build_woff_table.py`, then `python work/test_woff_table.py`. The 23 structural/model checks require no game and do not enable cheats. Optional catalogue validation needs your installed game; optional live checks need Windows, `pefile`, and a clean unpatched process. `ue3_inspect.py` is a developer memory helper capable of writes; ordinary users do not need to run it. The packaged builder includes all current script-module dependencies.
 
 See [usage and safety](docs/usage.md), [testing status](docs/testing.md), and [history](CHANGELOG.md). No warranty; use offline single-player only.

@@ -6,6 +6,11 @@ from woff_cost_item_scripts import ZERO_AP, item_script
 from woff_capture_scripts import easy_capture_script
 from woff_replacement_v9 import replacement_script, dropdown as mirage_dropdown, ARM
 from woff_save_script import SAVE
+from woff_loot_scripts import LOOT
+from woff_status_scripts import STATUS
+from woff_combat_extra_scripts import CRITICAL, STACK
+from woff_accuracy_script import ACCURACY
+from woff_topple_script import topple_script
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -271,7 +276,7 @@ def main():
     entries = E.SubElement(root, "CheatEntries")
     info_guard=(ROOT/'work'/'woff_info_readonly.lua').read_text(encoding='utf-8')
     master_script=BOARD.replace('{$asm}',info_guard+'\n{$asm}',1)
-    master=entry(entries,1,"World of Final Fantasy - Original v13 [Enable First]",master_script)
+    master=entry(entries,1,"World of Final Fantasy - Original v19 [Enable First]",master_script)
     E.SubElement(master,"Options",moDeactivateChildrenAsWell="1")
     children=E.SubElement(master,"CheatEntries")
     entry(children,10,"Infinite Gil - Hold 9,999,999 [Balance stays after disable]",GIL)
@@ -313,7 +318,7 @@ def main():
     for ident,desc,offset in ((61,"Infinite Item Usage [Must own item]",0),
                                (62,"Never Below 1 Item When Used",1)):
         entry(itemchildren,ident,desc,f"[ENABLE]\nWFF_ItemCFG+{offset:X}:\ndb 01\n[DISABLE]\nWFF_ItemCFG+{offset:X}:\ndb 00\n")
-    entry(children,70,"Easy Imprism - Ignore Conditions + Boost Chance + No Prisms",
+    entry(children,70,"Easy Imprism - Conditions + Chance + No Prisms + Library Mirage Permission [Story caution]",
           easy_capture_script().replace('[ENABLE]','[ENABLE]'+guard,1))
     replacement=entry(children,80,"Next Capture Replacement - Enable [Experimental; ONE capture per battle]",
                       replacement_script().replace('[ENABLE]','[ENABLE]'+guard,1))
@@ -333,6 +338,22 @@ def main():
         E.SubElement(info,"DropDownList",ReadOnly="1",DescriptionOnly="1",DisplayValueAsItem="1").text=mirage_dropdown().replace('0:Select a Mirage first — no replacement','0:No replacement recorded',1)
     entry(children,90,"Save Anywhere - Field Menu [Reopen menu after toggling; separate save slot recommended]",
           SAVE.replace('[ENABLE]','[ENABLE]'+guard,1))
+    entry(children,100,"Guaranteed Enemy Loot Rolls [TEST; positive-chance drops only; defeat enemies]",
+          LOOT.replace('[ENABLE]','[ENABLE]'+guard,1))
+    buffs=entry(children,110,"Party Battle Status Options - Enable [TEST]",
+                STATUS.replace('[ENABLE]','[ENABLE]'+guard,1))
+    E.SubElement(buffs,"Options",moDeactivateChildrenAsWell="1")
+    buffchildren=E.SubElement(buffs,"CheatEntries")
+    for ident,desc,offset in ((111,"Always Haste - Living Party [TEST]",0),
+                              (112,"Always Regen - Living Party [TEST]",1),
+                              (113,"Always Protect / Shell - Living Party [TEST]",2),
+                              (114,"Positive Buffs Never Expire - Party [TEST; excludes Reflect/Berserk]",3),
+                              (115,"Block Negative Statuses - Party [TEST; does not block KO or cure existing effects]",4)):
+        entry(buffchildren,ident,desc,f"[ENABLE]\nWFF_StatusCFG+{offset:X}:\ndb 01\n[DISABLE]\nWFF_StatusCFG+{offset:X}:\ndb 00\n")
+    entry(children,116,"Always Critical - Party [Critical-capable attacks only]",CRITICAL.replace('[ENABLE]','[ENABLE]'+guard,1))
+    entry(children,117,"Party Stacks Never Topple [TEST; balance damage; manual unstack still allowed]",STACK.replace('[ENABLE]','[ENABLE]'+guard,1))
+    entry(children,118,"Never Miss - Party [TEST; enable in battle; normal accuracy checks only]",ACCURACY.replace('[ENABLE]','[ENABLE]'+guard,1))
+    entry(children,119,"Topple One Enemy Stack - F8 [Press F8, then Defend before enemy turn; no HP damage]",topple_script())
     text(root,"UserdefinedSymbols","")
     text(root,"Comments", "Original implementation. DrummerIX reference CT was read for context only; "
          "addresses and machine instructions were independently checked in the running game. "
@@ -379,16 +400,50 @@ def main():
          "Unused/test/outside-library entries are labelled, not certified ownable. Library membership "
          "does not guarantee safety. Back up saves and initially test a normal species. "
          "Verify appearance, board, abilities and stats before saving a replacement result. "
-         "Do not freeze informational fields. Champion-cost and instant-unstack features are not implemented. "
+         "Do not freeze informational fields. Champion-cost is not implemented. "
          "v11 bypasses only the field-menu Save entry's required permission flag. Close/reopen the "
          "menu after toggling. Does not save automatically or enable battle/cutscene menus. "
          "User confirmed field saving and reloading on 2026-10-10. Other maps/story states remain "
          "untested; a separate save slot is recommended. v12 fixes disable-time address resolution. "
-         "No save-writing routines or persistent event flags are modified.")
+         "No save-writing routines or persistent event flags are modified. "
+         "v15 added party status, critical and stack-balance options. User confirmed critical attacks "
+         "in gameplay; the other new battle options retain TEST labels. "
+         "v16 adds a reversible loaded-script normal accuracy result override for player-side attackers "
+         "only. Enable Never Miss while in battle. Enemy accuracy, deliberate-miss, resurrection and "
+         "capture routines are not altered. It does not bypass immunity or scripted battle rules. "
+         "If the battle script VM is rebuilt, retoggle in battle. Gameplay verification is pending. "
+         "v18 repairs stacked-member status propagation, includes verified Lann/Reynn classes in "
+         "party status filters, and maintains native Protect/Shell counters when duration protection "
+         "is selected. Buff application requires battle time to advance (choose Defend). "
+         "Easy Imprism now bypasses encounter capture permission only for library-listed enemy "
+         "Mirage species, including Behemoth, without changing their actor permission fields. "
+         "Both native eligibility and the UI permission binding are covered; living-target, "
+         "capture-state and other battle checks still run. This does not promise all bosses or "
+         "scripted encounters are safe: capturing a story opponent may affect progression. "
+         "Use a separate save and verify the owned Mirage after battle.")
+    root.find('Comments').text += (
+         " User confirmed Behemoth capture succeeds with v18 on 2026-10-10. "
+         "Live status masks were verified on both party stacks and all four members after Defend, "
+         "with enemy status unchanged. Buff effects across later battles remain under testing. "
+         "v19 adds an F8 one-shot enemy topple experiment. Enable the entry, then press F8 in battle. "
+         "It dispatches the native collapse binding from the game's actor-update thread, not a CE "
+         "worker thread. Only living enemy UnitTower actors with two or three members are eligible; "
+         "no HP, party balance, capture or ownership fields are changed. One stack per press. "
+         "Unconsumed requests expire after three seconds. If the command menu pauses battle time, "
+         "press F8 immediately before choosing Defend, just before the enemy's turn. "
+         "User confirmed this topples the Mini Golem/Copper Gnome stack on 2026-10-10. "
+         "It is queued, not an immediate command-menu animation. Other encounters remain untested.")
     E.indent(root, space="  ")
-    target=ROOT/"outputs"/"World of Final Fantasy - Original v13.CT"
+    target=ROOT/"outputs"/"World of Final Fantasy - Original v19.CT"
     E.ElementTree(root).write(target,encoding="utf-8",xml_declaration=True)
     (ROOT/'work'/'woff-save.aa').write_text(SAVE.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
+    (ROOT/'work'/'woff-loot.aa').write_text(LOOT.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
+    (ROOT/'work'/'woff-status.aa').write_text(STATUS.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
+    (ROOT/'work'/'woff-capture-v18.aa').write_text(easy_capture_script().replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
+    (ROOT/'work'/'woff-critical.aa').write_text(CRITICAL.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
+    (ROOT/'work'/'woff-stack.aa').write_text(STACK.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
+    (ROOT/'work'/'woff-accuracy.aa').write_text(ACCURACY.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
+    (ROOT/'work'/'woff-topple.aa').write_text(topple_script(),encoding='utf-8')
     print(target)
 
 

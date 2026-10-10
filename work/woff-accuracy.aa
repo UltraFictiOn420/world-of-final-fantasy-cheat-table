@@ -1,0 +1,91 @@
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+{$lua}
+if syntaxcheck then return end
+assert(not WFF_AccuracyState,'Never Miss is already active.')
+local function scan(pattern)
+  local s=AOBScan(pattern,'+W-C');local t={}
+  if s then for i=0,s.Count-1 do t[#t+1]=tonumber(s[i],16) end;s.destroy() end
+  return t
+end
+local function bytes(a,n) return readBytes(a,n,true) end
+local function same(a,t)
+  local b=bytes(a,#t);if not b then return false end
+  for i=1,#t do if b[i]~=t[i] then return false end end
+  return true
+end
+local function qpattern(n)
+  local t={};for i=1,8 do t[i]=string.format('%02X',n%256);n=math.floor(n/256) end
+  return table.concat(t,' ')
+end
+local function str(p) return p and readString(p+24,120) end
+local head='05 01 00 00 41 41 00 00 1C 41 00 01 05 01 00 00 41 81 00 00 1C 41 00 01 05 C1 00 00 1C 81 80 00 4B 01 41 00 5C 81 00 01 8B 01 C1 00 9C 81 00 01 C5 41 01 00 00 02 00 01 40 02 80 00 81 82 01 00 DC 81 00 02'
+local tail={0x45,2,0,0,0x81,0x82,5,0,0xC0,2,0,4,0x5C,0x42,0x80,1,0x1E,2,0,1,0x1E,0,0x80,0}
+local candidates={}
+for _,code in ipairs(scan(head)) do
+  if same(code+61*4,tail) then
+    for _,ref in ipairs(scan(qpattern(code))) do
+      local p=ref-0x18;local k=readQword(p+0x10)
+      if readBytes(p+8,1)==9 and readInteger(p+0x4C)==23 and readInteger(p+0x50)==67
+       and str(readQword(p+0x40))=='@battle_attack_hit_check.lua'
+       and str(k and readQword(k+4*16))=='getStatusParam'
+       and str(k and readQword(k+2*16))=='        判定タイプ : 汎用（General）' then
+        candidates[#candidates+1]={proto=p,code=code,k=k}
+      end
+    end
+  end
+end
+assert(#candidates==1,'Enter a battle first. Supported normal hit-check prototype was not uniquely found.')
+local names={}
+for _,addr in ipairs(scan('70 6C 61 79 65 72 54 79 70 65 00')) do
+  local s=addr-24
+  if readBytes(s+8,1)==4 and readQword(s+16)==10 then names[#names+1]=s end
+end
+assert(#names==1,'Party-side property string was not uniquely found; no changes applied.')
+-- Replace only the final diagnostic logging and returns with:
+-- local status=attacker:getStatusParam()
+-- if status.playerType==0 then result=true end
+-- return result
+-- Enemy accuracy, forced-miss/resurrection/capture checks are unchanged.
+local function abc(op,a,b,c) return op+a*64+c*16384+b*8388608 end
+local words={abc(11,9,0,260),abc(28,9,2,2),abc(6,9,9,257),abc(23,1,9,262),abc(2,8,1,0),abc(30,8,2,0)}
+local patch={}
+for _,w in ipairs(words) do for i=1,4 do patch[#patch+1]=w%256;w=math.floor(w/256) end end
+local c=candidates[1];local state={pid=getOpenedProcessID(),proto=c.proto,code=c.code,k=c.k,
+ source=readQword(c.proto+0x40),originalName=readQword(c.k+16),name=names[1],tail=tail,patch=patch}
+-- K1 is diagnostic text only; reuse a rooted native property name. No allocation or GC object creation.
+assert(writeQword(c.k+16,state.name),'Could not update diagnostic constant.')
+if not writeBytes(c.code+61*4,patch) then
+  writeQword(c.k+16,state.originalName);error('Could not update hit-result bytecode.')
+end
+WFF_AccuracyState=state
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+local s=WFF_AccuracyState
+if s and s.pid==getOpenedProcessID() and readBytes(s.proto+8,1)==9
+ and readQword(s.proto+0x18)==s.code and readQword(s.proto+0x10)==s.k
+ and readQword(s.proto+0x40)==s.source then
+ local b=readBytes(s.code+61*4,#s.patch,true);local matched=b~=nil
+ for i=1,#s.patch do if not b or b[i]~=s.patch[i] then matched=false end end
+ assert(matched and readQword(s.k+16)==s.name,'Accuracy bytes changed unexpectedly; leave this enabled and report the error.')
+ assert(writeBytes(s.code+61*4,s.tail),'Could not restore hit-result bytecode.')
+ assert(writeQword(s.k+16,s.originalName),'Could not restore diagnostic constant.')
+end
+-- A destroyed/rebuilt VM is not written to. Retoggle in a new battle if it was rebuilt.
+WFF_AccuracyState=nil
+{$asm}

@@ -1,0 +1,61 @@
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_CritChance,WOFF.exe,89 54 24 10 4C 8B DC 55 53 56 41 56 41 57 49 8D 6B A1)
+assert(WFF_CritChance,89 54 24 10 4C 8B DC)
+alloc(WFF_CritCode,512,WFF_CritChance)
+label(WFF_CritNative)
+registersymbol(WFF_CritChance)
+WFF_CritCode:
+pushfq
+push rax
+push r10
+// Zero native critical chance means the attack is not critical-capable.
+test edx,edx
+jle WFF_CritNative
+test rcx,rcx
+jz WFF_CritNative
+mov r10,[rcx+8]
+test r10,r10
+jz WFF_CritNative
+mov rax,WOFF.exe+2F39FC0
+cmp [r10],rax
+je @f
+mov rax,WOFF.exe+2F4B168
+cmp [r10],rax
+jne WFF_CritNative
+@@:
+cmp dword ptr [r10+2E34],0
+jne WFF_CritNative
+pop r10
+pop rax
+popfq
+mov eax,#100
+ret
+WFF_CritNative:
+pop r10
+pop rax
+popfq
+mov [rsp+10],edx
+mov r11,rsp
+jmp WFF_CritChance+7
+WFF_CritChance:
+jmp WFF_CritCode
+nop 2
+[DISABLE]
+WFF_CritChance:
+db 89 54 24 10 4C 8B DC
+unregistersymbol(WFF_CritChance)
+dealloc(WFF_CritCode)

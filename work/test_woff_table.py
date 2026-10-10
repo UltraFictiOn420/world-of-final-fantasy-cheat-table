@@ -9,7 +9,7 @@ import math
 
 
 ROOT=Path(__file__).resolve().parents[1]
-TABLE=ROOT/"outputs"/"World of Final Fantasy - Original v13.CT"
+TABLE=ROOT/"outputs"/"World of Final Fantasy - Original v19.CT"
 
 
 class TableChecks(unittest.TestCase):
@@ -34,7 +34,78 @@ class TableChecks(unittest.TestCase):
         entries=E.parse(TABLE).findall(".//CheatEntry")
         ids=[e.findtext("ID") for e in entries]
         self.assertEqual(len(ids),len(set(ids)))
-        self.assertEqual(set(ids),{"1","10","11","20","21","30","31","32","40","41","42","43","44","45","50","51","60","61","62","70","80","81","82","83","84","85","90"})
+        self.assertEqual(set(ids),{"1","10","11","20","21","30","31","32","40","41","42","43","44","45","50","51","60","61","62","70","80","81","82","83","84","85","90","100","110","111","112","113","114","115","116","117","118","119"})
+
+    def test_topple_one_shot_enemy_scope(self):
+        e={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
+        s=e['119'].findtext('AssemblerScript')
+        self.assertIn('cmp dword ptr [rbx+2E34],1',s)
+        self.assertIn('cmp rbx,10',s)
+        self.assertIn('cmp rbx,18',s)
+        self.assertIn('mov dword ptr [WFF_ToppleRequest],0',s)
+        self.assertIn('call WOFF.exe+55D440',s)
+        self.assertIn('mov [rsp+28],rax',s)
+        self.assertIn('db F3 0F 59 BF EC 29 00 00',s)
+        self.assertIn('end,0x77)',s)
+        self.assertIn('getTickCount()-s.requested>3000',s)
+        self.assertNotIn('createThread',s)
+        self.assertNotIn('executeCodeEx',s)
+        self.assertNotRegex(s,r'mov\s+(?:dword ptr )?\[rbx\+29C8\]')
+
+    def test_accuracy_party_filter_and_restore(self):
+        e={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
+        s=e['118'].findtext('AssemblerScript')
+        self.assertIn("@battle_attack_hit_check.lua",s)
+        self.assertIn('abc(23,1,9,262)',s) # EQ party type with constant zero; enemy skips assignment.
+        self.assertIn('abc(2,8,1,0)',s) # Boolean true, not truthy numeric zero.
+        self.assertIn('abc(30,8,2,0)',s)
+        self.assertIn('writeBytes(s.code+61*4,s.tail)',s)
+        self.assertIn('writeQword(s.k+16,s.originalName)',s)
+        self.assertNotIn('TEST',e['116'].findtext('Description'))
+
+    def test_party_status_scope(self):
+        entries={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
+        script=entries['110'].findtext('AssemblerScript')
+        self.assertIn('cmp dword ptr [rdi+2E34],0',script)
+        self.assertIn('cmp dword ptr [rcx+2E34],0',script)
+        self.assertIn('WOFF.exe+2F39FC0',script)
+        self.assertIn('WOFF.exe+2F4B168',script)
+        self.assertIn('mov eax,0AABB600',script)
+        self.assertIn('mov eax,155441FE',script)
+        self.assertIn('call qword ptr [rax+700]',script)
+        self.assertIn('mov dword ptr [rsp+30],0',script)
+        self.assertIn('mov r8,[rdi+3690]',script)
+        self.assertIn('WFF_StatusMemberMissing:',script)
+        self.assertIn('WOFF.exe+2F49E78',script)
+        self.assertIn('WOFF.exe+2F3DF30',script)
+        self.assertIn('mov dword ptr [rdi+3414],2',script)
+        self.assertIn('mov dword ptr [rdi+3418],2',script)
+        self.assertIn('cmp rax,18',script)
+        self.assertIn('db 85 87 B0 2A 00 00',script)
+        self.assertIn('db 44 89 4C 24 20',script)
+
+    def test_critical_and_balance_scope(self):
+        entries={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
+        crit=entries['116'].findtext('AssemblerScript')
+        self.assertIn('test edx,edx\njle WFF_CritNative',crit)
+        self.assertIn('cmp dword ptr [r10+2E34],0',crit)
+        self.assertIn('mov eax,#100\nret',crit)
+        self.assertIn('db 89 54 24 10 4C 8B DC',crit)
+        stack=entries['117'].findtext('AssemblerScript')
+        self.assertIn('cmp dword ptr [rcx+2E34],0',stack)
+        self.assertIn('movss xmm6,[rcx+2B2C]',stack)
+        self.assertIn('db F3 0F 11 B1 28 2B 00 00',stack)
+
+    def test_loot_roll_scope_and_restore(self):
+        script=next(e.findtext('AssemblerScript') for e in E.parse(TABLE).findall('.//CheatEntry') if e.findtext('ID')=='100')
+        self.assertIn('0x5B9B7E76',script)
+        self.assertIn('0F 2F F0 0F 83 F6 01 00 00',script)
+        self.assertIn('comiss xmm6,xmm0',script)
+        self.assertIn('pushfq',script)
+        self.assertIn('popfq',script)
+        self.assertIn('db 0F 2F F0 0F 83 F6 01 00 00',script)
+        self.assertNotIn('call ',script)
+        self.assertNotRegex(script,r'mov\s+\[')
 
     def test_field_save_scope_and_restore(self):
         entries={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
@@ -86,13 +157,13 @@ class TableChecks(unittest.TestCase):
 
     def test_prism_bypass_is_capture_scoped(self):
         script=next(e.findtext('AssemblerScript') for e in E.parse(TABLE).findall('.//CheatEntry') if e.findtext('ID')=='70')
-        self.assertEqual(script.count('aobscanmodule('),4)
+        self.assertEqual(script.count('aobscanmodule('),6)
         self.assertEqual(script.count('[ENABLE]'),1)
         self.assertEqual(script.count('[DISABLE]'),1)
         self.assertIn('mov dword ptr [rsp+18],0',script)
         self.assertIn('mov [rsp+18],r8d',script)
         self.assertIn('jmp WFF_PrismConsume+A2',script)
-        self.assertIn('cmp dword ptr [rcx+2B40],0',script)
+        self.assertIn('cmp [rcx+2B40],esi',script)
         self.assertIn('cmp dword ptr [rsi+2E34],1',script)
         self.assertIn('db 44 89 44 24 18',script)
         self.assertIn('db 39 BE 74 2B 00 00',script)
@@ -101,13 +172,37 @@ class TableChecks(unittest.TestCase):
 
     def test_capture_guards_and_no_actor_writes(self):
         script=next(e.findtext('AssemblerScript') for e in E.parse(TABLE).findall('.//CheatEntry') if e.findtext('ID')=='70')
-        self.assertEqual(script.count('aobscanmodule('),4)
+        self.assertEqual(script.count('aobscanmodule('),6)
         self.assertIn('jmp WFF_CaptureReady+C',script)
         self.assertIn('db 33 C0 0F 57 C0',script)
         self.assertIn('db F3 0F 10 BB E8 34 00 00',script)
-        self.assertIn('cmp dword ptr [r8+2B40],0',script)
+        self.assertIn('jmp WFF_CapturePermission+15',script)
+        self.assertIn('jmp WFF_CaptureUIHook+7',script)
+        self.assertIn('cmp dword ptr [rcx+2E34],1',script)
+        self.assertIn('mov edx,[rcx+29B8]',script)
+        self.assertNotIn('@LIBRARY_',script)
+        self.assertIn('db 39 B1 40 2B 00 00',script)
+        self.assertIn('db 83 BB 40 2B 00 00 00',script)
         self.assertIn('cmp dword ptr [rbx+2E34],1',script)
         self.assertNotRegex(script,r'mov(?:ss)?\s+(?:dword ptr )?\[(?:rcx|r8|rbx)\+')
+
+    def test_capture_permission_allowlist_and_native_continuation(self):
+        from woff_mirage_catalogue import catalogue
+        rows=catalogue()
+        ids={r['id'] for r in rows if r['library_listed'] and r['candidate']}
+        self.assertEqual(len(ids),248)
+        self.assertIn(0x1B83,ids)
+        self.assertNotIn(0,ids)  # Lann is not a wild-capture candidate.
+        self.assertTrue(all(r['id'] not in ids for r in rows
+                            if r['candidate'] and not r['library_listed']))
+        source=next(e.findtext('AssemblerScript') for e in E.parse(TABLE).findall('.//CheatEntry')
+                    if e.findtext('ID')=='70')
+        # Native rejection and all later gates remain, not a whole-function ret-true.
+        self.assertIn('cmp [rcx+2B40],esi\njmp WFF_CapturePermission+6',source)
+        self.assertIn('jmp WFF_CapturePermission+15',source)
+        self.assertEqual(0x241A88+0x15,0x241A9D)
+        self.assertIn('cmp dword ptr [rbx+2B40],0\njmp WFF_CaptureUIHook+7',source)
+        self.assertNotRegex(source,r'mov\s+(?:dword ptr )?\[[^\]]*2B40\]')
 
     def test_cost_and_consumption_hooks(self):
         entries={e.findtext('ID'):e.findtext('AssemblerScript') or '' for e in E.parse(TABLE).findall('.//CheatEntry')}

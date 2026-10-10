@@ -18,7 +18,19 @@ Enable the section, choose a normal species, then arm ONE capture. It starts dis
 
 Only Mu → Chocochick and Mu → Goblin ownership are confirmed. The 264 candidates (248 library-listed) are metadata candidates, not a promise that all are safe or ownable. Unused/test/outside-library entries remain explicitly marked. Multiple captures in one battle, all species, abilities, boards and saved replacement persistence need broader testing. Status Idle/consumed alone does not prove success; check ownership and free slots.
 
-Easy Imprism combines conditions/chance and capture-only Prism bypass. It still requires a living, natively eligible target; it does not promise uncapturable bosses.
+Easy Imprism combines conditions/chance and capture-only Prism bypass. v18 also bypasses encounter capture permission ONLY for library-listed enemy Mirage species. Behemoth capture is user-confirmed. Living-target, capture-state and other battle checks remain. It does not promise all bosses or scripted encounters are safe: capturing a story opponent may affect progression. Use a separate save and verify your Mirage list afterward.
+
+## F8 enemy topple
+
+Enable Topple One Enemy Stack. In battle, press F8, then immediately choose Defend just before the enemy's turn. Command-menu wait mode may pause the required actor update. It queues the game's native collapse action, not an instant menu animation. One living enemy stack (two or three members) per press; repeated presses may be needed for multiple stacks. Pending requests expire after three seconds to avoid a stale press triggering in a later battle. No HP-damage, party-balance, capture or ownership writes are made by this script. Mini Golem/Copper Gnome separation is user-confirmed; HP preservation and other encounters need broader observation. Disable removes the hotkey and timer and restores the native update bytes.
+
+## Battle statuses, accuracy and loot
+
+Buffs need battle time to advance (choose Defend). v18 repairs propagation to stack members and includes observed Lann/Reynn actor classes. Party/enemy separation and member status flags were checked in live memory. These checks are not proof that every effect behaves correctly across later battles; TEST labels remain on status options. Negative-status protection does not revive KO or cure existing effects; duration protection excludes Reflect/Berserk.
+
+Always Critical applies only to critical-capable party attacks. Never Miss affects normal party accuracy checks, not immunity or special scripted rules; enable in battle and retoggle if the battle VM is rebuilt. Party Stacks Never Topple protects balance, not manual unstack commands.
+
+Guaranteed Enemy Loot Rolls applies only to positive-chance eligible drops from defeated enemies, not captures. It does not invent rare items, multiply quantities or change quest rewards. A Mu yielded a potion and Gil, but broader effectiveness remains unconfirmed.
 
 ## Save Anywhere
 

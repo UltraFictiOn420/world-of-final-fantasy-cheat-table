@@ -1,0 +1,45 @@
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- Never reopen the process inside AA: it can invalidate AA's captured handle.
+if getOpenedProcessID()~=getProcessIDFromProcessName('WOFF.exe') then
+  error('Select WOFF.exe in Cheat Engine before enabling the table.')
+end
+local b=getAddressSafe('WOFF.exe')
+if not b then error('Start WoFF and load a save first.') end
+local pe=readInteger(b+0x3C)
+if not pe or readInteger(b+pe+8)~=0x5B9B7E76 then
+  error('Unverified WoFF executable build; no patches applied.')
+end
+{$asm}
+
+aobscanmodule(WFF_BalanceSet,WOFF.exe,F3 0F 11 B1 28 2B 00 00 0F 28 74 24 20 48 83 C4 30)
+assert(WFF_BalanceSet,F3 0F 11 B1 28 2B 00 00)
+alloc(WFF_BalanceCode,256,WFF_BalanceSet)
+label(WFF_BalanceNative)
+registersymbol(WFF_BalanceSet)
+WFF_BalanceCode:
+pushfq
+push rax
+mov rax,WOFF.exe+2F4B168
+cmp [rcx],rax
+jne WFF_BalanceNative
+cmp dword ptr [rcx+2E34],0
+jne WFF_BalanceNative
+cmp dword ptr [rcx+29C8],0
+jle WFF_BalanceNative
+// Keep the native stack-balance setter at its own maximum, not a huge constant.
+movss xmm6,[rcx+2B2C]
+WFF_BalanceNative:
+pop rax
+popfq
+movss [rcx+2B28],xmm6
+jmp WFF_BalanceSet+8
+WFF_BalanceSet:
+jmp WFF_BalanceCode
+nop 3
+[DISABLE]
+WFF_BalanceSet:
+db F3 0F 11 B1 28 2B 00 00
+unregistersymbol(WFF_BalanceSet)
+dealloc(WFF_BalanceCode)

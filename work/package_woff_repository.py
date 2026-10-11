@@ -54,7 +54,8 @@ Ongoing project, not a universally tested final release.
 
 ## Download and start
 
-[Download v29](outputs/World%20of%20Final%20Fantasy%20-%20Original%20v29.CT).
+[Download the latest release](https://github.com/UltraFictiOn420/world-of-final-fantasy-cheat-table/releases/latest),
+or [get the table from the repository](outputs/World%20of%20Final%20Fantasy%20-%20Original%20v29.CT).
 Open in Cheat Engine, attach to `WOFF.exe`, load a save, then enable the top **Enable First** entry.
 Disable old cheats before loading another table. Back up saves; use separate slots for experimental changes.
 Verified x64 executable: version 2.0.0.0, PE timestamp `5B9B7E76`; other builds are not certified.
@@ -94,7 +95,7 @@ No game binaries/assets, saves, raw memory dumps, credentials or machine-specifi
 Reference tables were studied for context; their scripts are not redistributed. Deleted research repo stays deleted.
 [Launcher project](https://github.com/UltraFictiOn420/world-of-final-fantasy-launcher) remains separate.
 See [usage](docs/usage.md), [testing](docs/testing.md), [next steps](docs/next-session.md), [history](CHANGELOG.md).
-Offline single-player only; no warranty. This source backup is not a new GitHub Release.
+Offline single-player only; no warranty. v29 is published as a regular release with testing limitations documented.
 '''
     files['docs/testing.md']='''# Validation — v29, 2026-10-11
 

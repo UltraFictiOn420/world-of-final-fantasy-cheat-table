@@ -29,8 +29,12 @@ for _,event in ipairs({'OnValueChange','OnAddressChange','OnTypeChange','OnDescr
   local handler=function(addresslist,record)
     if record and state.records[record.ID] then
       local parent=record.Parent
-      if parent and parent.ID==80 and parent.Parent and parent.Parent.ID==1 then
-        return true
+      if parent and parent.ID==80 then
+        local ancestor=parent.Parent
+        while ancestor do
+          if ancestor.ID==1 then return true end
+          ancestor=ancestor.Parent
+        end
       end
     end
     if previous then return previous(addresslist,record) end

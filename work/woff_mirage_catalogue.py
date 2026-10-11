@@ -38,11 +38,16 @@ def catalogue():
     library=csh_rows(GAME_CSV/'mirage_library_list.csh')
     names={r[0]:r[6] for r in csh_rows(GAME_CSV/'message/us/character_name.csh') if r[0]}
     library_ids={r[3] for r in library if isinstance(r[3],int)}
+    resources={r[0]:r for r in csh_rows(GAME_CSV/'character_resource_list.csh') if isinstance(r[0],int)}
+    sizes={r[0]:r[2] for r in csh_rows(GAME_CSV/'character_size.csh') if isinstance(r[0],int)}
     result=[]
     for row in chars:
         ident,key,_,name_key=row[:4]
         if not isinstance(ident,int) or not isinstance(key,str): continue
         name=names.get(name_key) or key
+        resource=resources.get(row[94])
+        size_native=sizes.get(resource[19]) if resource else None
+        size={'S':'S','M':'M','L':'L','LL':'XL','EX':'XL'}.get(size_native,'?')
         monster=key.lower().startswith(('monster','addmonster','exmonster'))
         status='library-listed; ownership untested' if ident in library_ids else 'EXPERIMENTAL: outside Mirage library; ownership unverified'
         if name=='NOT USED': status='UNUSED LABEL: experimental; ownership unverified'
@@ -52,7 +57,7 @@ def catalogue():
             status='NON-MIRAGE CHARACTER: not a verified ownership candidate'
         result.append(dict(id=ident,hex_id=f'{ident:04X}',key=key,name=name,
                            library_listed=ident in library_ids,status=status,
-                           candidate=monster or ident in library_ids,
+                           candidate=monster or ident in library_ids,size=size,size_native=size_native,
                            raw_cells=row))
     return result
 

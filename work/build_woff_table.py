@@ -276,7 +276,7 @@ def main():
     entries = E.SubElement(root, "CheatEntries")
     info_guard=(ROOT/'work'/'woff_info_readonly.lua').read_text(encoding='utf-8')
     master_script=BOARD.replace('{$asm}',info_guard+'\n{$asm}',1)
-    master=entry(entries,1,"World of Final Fantasy - Original v21 [Enable First]",master_script)
+    master=entry(entries,1,"World of Final Fantasy - Original v29 [Enable First]",master_script)
     E.SubElement(master,"Options",moDeactivateChildrenAsWell="1")
     children=E.SubElement(master,"CheatEntries")
     entry(children,10,"Infinite Gil - Hold 9,999,999 [Balance stays after disable]",GIL)
@@ -327,7 +327,7 @@ def main():
     selection=entry(replacement_children,81,"1. Select replacement Mirage [Unusual entries marked; ownership unverified]",
                     kind="4 Bytes",address="WFF_NextCaptureID")
     E.SubElement(selection,"DropDownList",ReadOnly="1",DescriptionOnly="1",DisplayValueAsItem="1").text=mirage_dropdown()
-    entry(replacement_children,82,"2. Arm ONE [Replacement appears in Mirage list AFTER battle; off/on to re-arm]",ARM)
+    entry(replacement_children,82,"2. Arm ONE [One capture per battle; off/on to re-arm]",ARM)
     status=entry(replacement_children,83,"INFO ONLY - Arm status [Read-only]",kind="4 Bytes",address="WFF_NextCaptureArmed")
     text(status,'Color','808080')
     E.SubElement(status,"DropDownList",ReadOnly="1",DescriptionOnly="1",DisplayValueAsItem="1").text="0:Idle / consumed\n1:Armed for one capture\n2:Capture queued — finish battle\n3:Processing"
@@ -338,23 +338,23 @@ def main():
         E.SubElement(info,"DropDownList",ReadOnly="1",DescriptionOnly="1",DisplayValueAsItem="1").text=mirage_dropdown().replace('0:Select a Mirage first — no replacement','0:No replacement recorded',1)
     entry(children,90,"Save Anywhere - Field Menu [Reopen menu after toggling; separate save slot recommended]",
           SAVE.replace('[ENABLE]','[ENABLE]'+guard,1))
-    entry(children,100,"Guaranteed Enemy Loot Rolls [TEST; positive-chance drops only; defeat enemies]",
+    entry(children,100,"Guaranteed Enemy Loot + Alternative Drops [Defeat enemies; native quantities]",
           LOOT.replace('[ENABLE]','[ENABLE]'+guard,1))
-    buffs=entry(children,110,"Party Battle Status Options - Enable [TEST]",
+    buffs=entry(children,110,"Party Battle Buffs - Enable [Applies before first action]",
                 STATUS.replace('[ENABLE]','[ENABLE]'+guard,1))
     E.SubElement(buffs,"Options",moDeactivateChildrenAsWell="1")
     buffchildren=E.SubElement(buffs,"CheatEntries")
-    for ident,desc,offset in ((111,"Always Haste - Living Party [TEST]",0),
-                              (112,"Always Regen - Living Party [TEST]",1),
-                              (113,"Always Protect / Shell - Living Party [TEST]",2),
-                              (114,"Positive Buffs Never Expire - Party [TEST; excludes Reflect/Berserk]",3),
-                              (115,"Block Negative Statuses - Party [TEST; does not block KO or cure existing effects]",4)):
+    for ident,desc,offset in ((111,"Always Haste - Living Party",0),
+                              (112,"Always Regen - Living Party",1),
+                              (113,"Always Protect / Shell - Living Party",2),
+                              (114,"Positive Buffs Never Expire [Unverified; excludes Reflect/Berserk]",3),
+                              (115,"Block Negative Statuses [Unverified; no KO protection or existing-effect cure]",4)):
         entry(buffchildren,ident,desc,f"[ENABLE]\nWFF_StatusCFG+{offset:X}:\ndb 01\n[DISABLE]\nWFF_StatusCFG+{offset:X}:\ndb 00\n")
     entry(children,116,"Always Critical - Party [Critical-capable attacks only]",CRITICAL.replace('[ENABLE]','[ENABLE]'+guard,1))
     entry(children,117,"Party Stacks Never Topple [Wobble may clear on next action; manual unstack allowed]",STACK.replace('[ENABLE]','[ENABLE]'+guard,1))
     quarantined=E.SubElement(children,'CheatEntry')
     text(quarantined,'ID',118)
-    text(quarantined,'Description','"Never Miss - UNAVAILABLE [crash reported; investigation pending]"')
+    text(quarantined,'Description','"Never Miss - Unavailable [possible crash; no active script]"')
     text(quarantined,'Color','808080')
     text(quarantined,'GroupHeader',1)
     entry(children,119,"Topple One Enemy Stack - F8 [Beep = queued; expires in 3 seconds; resume battle promptly]",topple_script())
@@ -418,7 +418,8 @@ def main():
          "If the battle script VM is rebuilt, retoggle in battle. Gameplay verification is pending. "
          "v18 repairs stacked-member status propagation, includes verified Lann/Reynn classes in "
          "party status filters, and maintains native Protect/Shell counters when duration protection "
-         "is selected. Buff application requires battle time to advance (choose Defend). "
+         "is selected. v22 adds selected-buff application before the native command-menu clock gate; "
+         "fresh-battle immediate visuals still need user confirmation. "
          "Easy Imprism now bypasses encounter capture permission only for library-listed enemy "
          "Mirage species, including Behemoth, without changing their actor permission fields. "
          "Both native eligibility and the UI permission binding are covered; living-target, "
@@ -438,12 +439,91 @@ def main():
          "User confirmed this topples the Mini Golem/Copper Gnome stack on 2026-10-10. "
          "It is queued, not an immediate command-menu animation. Other encounters remain untested.")
     E.indent(root, space="  ")
-    target=ROOT/"outputs"/"World of Final Fantasy - Original v21.CT"
+    target=ROOT/"outputs"/"World of Final Fantasy - Original v29.CT"
     root.find('Comments').text += (" v21: F8 beep acknowledges queuing only; requests expire after three real-time seconds, "
         "even while the command menu pauses battle updates. Never Topple provisionally user-confirmed; existing "
         "wobble may clear on the next action. Never Miss is unavailable following an unconfirmed crash report; "
-        "no accuracy patch is included. Immediate battle-start buffs and loot effectiveness remain unverified.")
+        "no accuracy patch is included. v22 adds an earlier native actor-update hook for selected party buffs; "
+        "it runs during command-menu waiting. Fresh-battle application confirmed on both stacks and all six members "
+        "with user-reported visuals before taking an action. v23 repairs Never Topple's missing counter label declaration. "
+        "Loot bypass confirmed in one five-enemy encounter: five normally failing rolls yielded four Potions and one "
+        "Smelling Salts. v24 additionally bypasses first-success exclusion inside the defeated-enemy drop loop; "
+        "all positive-chance alternative entries are attempted with native quantities. Four-enemy test confirmed "
+        "all eight entries: four Potions, three Antidotes, one Wobblestopper; six normally failing rolls prevented. "
+        "Broader encounters, status-duration behaviour and negative-status protection still need verification. "
+        "v25: Mirage dropdown displays Name [Size] - Status without internal keys or hexadecimal IDs. "
+        "Sizes come from character resource column19 and character_size definitions; LL and EX display XL, "
+        "EX summons explicitly marked. Library-listed does not guarantee tested replacement ownership. "
+        "v26 tests selected-species visual construction and bounded current naming-list replacement alongside "
+        "the owned grant. No source-enemy identity writes. v26 animation confirmed, naming display still original. "
+        "v27 moves naming-list substitution to the earlier controller preparation state. User confirmed "
+        "Chocochick appearance during Imprism and on the naming screen, with default name Chocochick. "
+        "Other species, multiple captures and save/reload compatibility remain unverified. "
+        "v28 clarifies dropdown ownership status: legitimate species, gifts/rewards/transfigurations, "
+        "enemy-only cases and hidden/test entries. Unresolved species remain explicitly unverified; "
+        "library membership is not evidence of normal obtainability. No hidden entry is certified safe "
+        "or known save-breaking without validation. Replacement hooks unchanged from v27.")
+    # Presentation-only folders: no activation logic and no new memory hooks.
+    sections = (
+        (200, 'Currency / Mirage Board SP', (10,11,20,21)),
+        (201, 'Experience / Levels', (30,)),
+        (202, 'Battle / Damage / AP', (40,50,51,116)),
+        (203, 'Battle Buffs / Stack Balance', (110,117,119)),
+        (204, 'Items / Enemy Loot', (60,100)),
+        (205, 'Imprism / Capture Replacement', (70,80)),
+        (206, 'Field / Saving', (90,)),
+        (207, 'Unavailable Features [Information only]', (118,)),
+    )
+    records = {int(e.findtext('ID')): e for e in children}
+    for ident, label, record_ids in sections:
+        folder=E.SubElement(children,'CheatEntry')
+        text(folder,'ID',ident)
+        text(folder,'Description',f'"{label}"')
+        text(folder,'GroupHeader',1)
+        E.SubElement(folder,'Options',moHideChildren='1',moDeactivateChildrenAsWell='1')
+        groupchildren=E.SubElement(folder,'CheatEntries')
+        for record_id in record_ids:
+            record=records[record_id]
+            children.remove(record)
+            groupchildren.append(record)
+    # Replace historical development notes with current, non-contradictory help.
+    root.find('Comments').text = (
+        'World of Final Fantasy - Original v29. UI/documentation cleanup; game hooks unchanged from v28.\n\n'
+        'START: Attach CE to WOFF.exe, load a save, then enable the top entry. Section folders organize '
+        'the table; they are not cheat scripts. Enable feature parents before their child options. '
+        'Disable cheats before closing CE or loading a different table.\n\n'
+        'XP: Results become visible after battle on the field. 0 = none, 1 = normal; 50000x supported. '
+        'Max Level overrides the multiplier for positive XP awards.\n'
+        'DAMAGE/AP: One-Hit Kill overrides the player multiplier. God Mode blocks HP damage, not statuses. '
+        'Always Max applies to living party members, does not revive KO, and may need retoggling if actors rebuild.\n'
+        'ITEMS: Infinite Usage overrides Never Below 1. You must own the item. Disable for selling, crafting '
+        'and quest hand-ins until those removal paths are verified. Loot uses native quantities and does not multiply Gil.\n'
+        'BUFFS: Selected Haste/Regen/Protect/Shell apply before the first action; fresh-battle visuals were '
+        'user-confirmed. Duration protection and negative-status blocking remain unverified.\n'
+        'STACKS: Never Topple may leave the wobble animation until the next action. F8 queues ONE enemy '
+        'stack topple; beep confirms queuing, not completion. Queue expires after three real seconds. '
+        'Press just before Defend/enemy turn and resume battle promptly.\n\n'
+        'CAPTURE: Easy Imprism includes readiness/chance/prism bypass and permission for library-listed '
+        'Mirages. Story captures can affect progression; use a separate save. Replacement: enable parent, '
+        'select species, arm once, capture ONE Mirage, and finish battle without disabling/re-arming. '
+        'Toggle Arm off/on for the next battle. Chocochick capture animation, naming model/default name '
+        'and owned species were user-confirmed with v27. Other replacement species and save/reload safety '
+        'are not comprehensively validated.\n'
+        'DROPDOWN: Name [Size] - ownership status. LL/EX display XL; EX summons are explicitly marked. '
+        'Legit means normally obtainable, not guaranteed safe under replacement. Classification is partial. '
+        'Library membership alone does not prove ownability. Hidden/test/unused entries remain unverified, '
+        'not certified safe or known save-breaking. Grey INFO ONLY rows cannot be frozen/edited through '
+        'ordinary controls; selectors and multipliers remain editable.\n\n'
+        'SAVE: Field menu only; close/reopen the menu after toggling. Separate save slot recommended. '
+        'Gil, XP, owned Mirages and other already-applied persistent results are not undone by disabling.\n'
+        'UNAVAILABLE: Never Miss has no active patch following a possible crash report. Champion cost '
+        'is not implemented. No temporary traces or auto-running table Lua are included.\n'
+        'Original scripts; third-party tables were reference context only. Build guard targets the verified '
+        'WOFF executable. Broader encounter/DLC compatibility still needs testing.'
+    )
+    E.indent(root,space='  ')
     E.ElementTree(root).write(target,encoding="utf-8",xml_declaration=True)
+    (ROOT/'work'/'woff-mirage-dropdown.txt').write_text(mirage_dropdown(),encoding='utf-8')
     (ROOT/'work'/'woff-save.aa').write_text(SAVE.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
     (ROOT/'work'/'woff-loot.aa').write_text(LOOT.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
     (ROOT/'work'/'woff-status.aa').write_text(STATUS.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')

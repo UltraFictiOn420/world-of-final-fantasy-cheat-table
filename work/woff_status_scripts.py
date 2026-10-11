@@ -7,6 +7,148 @@ assert(WFF_StatusTick,85 87 B0 2A 00 00)
 assert(WFF_StatusApply,44 89 4C 24 20)
 alloc(WFF_StatusCode,4096,WFF_StatusTick)
 label(WFF_StatusCFG)
+aobscanmodule(WFF_StatusEarly,WOFF.exe,8B 91 70 29 00 00 48 8B F9 8B 89 68 29 00 00)
+assert(WFF_StatusEarly,8B 91 70 29 00 00)
+alloc(WFF_StatusEarlyCode,2048,WFF_StatusEarly)
+label(WFF_StatusEarlyRestore)
+label(WFF_StatusEarlyLoop)
+label(WFF_StatusEarlyNext)
+label(WFF_StatusEarlyCheck)
+label(WFF_StatusEarlyMembers)
+label(WFF_StatusEarlyApply)
+label(WFF_StatusEarlyCalls)
+label(WFF_StatusEarlySeen)
+label(WFF_StatusEarlyMemberLoop)
+label(WFF_StatusEarlyMemberNext)
+registersymbol(WFF_StatusEarly)
+registersymbol(WFF_StatusEarlyCalls)
+registersymbol(WFF_StatusEarlySeen)
+WFF_StatusEarlyCode:
+// Actor update precedes the native command-menu status-clock gate.
+// Ten pushes preserve flags/GPRs and retain the observed 16-byte alignment.
+pushfq
+push rax
+push rcx
+push rdx
+push r8
+push r9
+push r10
+push r11
+push rdi
+push r12
+sub rsp,0A0
+movups [rsp+40],xmm0
+movups [rsp+50],xmm1
+movups [rsp+60],xmm2
+movups [rsp+70],xmm3
+movups [rsp+80],xmm4
+movups [rsp+90],xmm5
+mov rdi,rcx
+cmp dword ptr [rdi+2E34],0
+jne WFF_StatusEarlyRestore
+cmp dword ptr [rdi+29C8],0
+jle WFF_StatusEarlyRestore
+test byte ptr [rdi+29A8],2
+jnz WFF_StatusEarlyRestore
+mov rax,WOFF.exe+2F4B168
+cmp [rdi],rax
+je @f
+mov rax,WOFF.exe+2F39FC0
+cmp [rdi],rax
+je @f
+mov rax,WOFF.exe+2F49E78
+cmp [rdi],rax
+je @f
+mov rax,WOFF.exe+2F3DF30
+cmp [rdi],rax
+jne WFF_StatusEarlyRestore
+@@:
+inc dword ptr [WFF_StatusEarlySeen]
+mov r12d,9
+WFF_StatusEarlyLoop:
+cmp r12d,0B
+je WFF_StatusEarlyNext
+cmp r12d,0C
+je @f
+cmp r12d,0D
+je WFF_StatusEarlyMembers
+cmp byte ptr [WFF_StatusCFG+2],0
+je WFF_StatusEarlyNext
+jmp WFF_StatusEarlyCheck
+@@:
+cmp byte ptr [WFF_StatusCFG+1],0
+je WFF_StatusEarlyNext
+jmp WFF_StatusEarlyCheck
+WFF_StatusEarlyMembers:
+cmp byte ptr [WFF_StatusCFG],0
+je WFF_StatusEarlyNext
+WFF_StatusEarlyCheck:
+mov eax,[rdi+2AB0]
+bt eax,r12d
+jnc WFF_StatusEarlyApply
+mov rax,WOFF.exe+2F4B168
+cmp [rdi],rax
+jne WFF_StatusEarlyNext
+mov r8,[rdi+3690]
+mov r9,[rdi+3698]
+mov rax,r9
+sub rax,r8
+cmp rax,18
+ja WFF_StatusEarlyNext
+WFF_StatusEarlyMemberLoop:
+cmp r8,r9
+jae WFF_StatusEarlyNext
+mov rax,[r8]
+test rax,rax
+jz WFF_StatusEarlyNext
+cmp dword ptr [rax+29C8],0
+jle WFF_StatusEarlyMemberNext
+mov eax,[rax+2AB0]
+bt eax,r12d
+jnc WFF_StatusEarlyApply
+WFF_StatusEarlyMemberNext:
+add r8,8
+jmp WFF_StatusEarlyMemberLoop
+WFF_StatusEarlyApply:
+mov rcx,rdi
+mov edx,r12d
+mov r8d,1
+xor r9d,r9d
+mov dword ptr [rsp+20],1
+mov qword ptr [rsp+28],0
+mov dword ptr [rsp+30],0
+mov rax,[rdi]
+call qword ptr [rax+700]
+inc dword ptr [WFF_StatusEarlyCalls]
+WFF_StatusEarlyNext:
+inc r12d
+cmp r12d,0D
+jle WFF_StatusEarlyLoop
+WFF_StatusEarlyRestore:
+movups xmm0,[rsp+40]
+movups xmm1,[rsp+50]
+movups xmm2,[rsp+60]
+movups xmm3,[rsp+70]
+movups xmm4,[rsp+80]
+movups xmm5,[rsp+90]
+add rsp,0A0
+pop r12
+pop rdi
+pop r11
+pop r10
+pop r9
+pop r8
+pop rdx
+pop rcx
+pop rax
+popfq
+mov edx,[rcx+2970]
+jmp WFF_StatusEarly+6
+align 4
+WFF_StatusEarlyCalls:
+dd 0
+WFF_StatusEarlySeen:
+dd 0
 label(WFF_StatusOriginal)
 label(WFF_StatusSaved)
 label(WFF_StatusWanted)
@@ -230,7 +372,12 @@ jmp WFF_StatusCode
 nop
 WFF_StatusApply:
 jmp WFF_StatusApplyCode
+WFF_StatusEarly:
+jmp WFF_StatusEarlyCode
+nop
 [DISABLE]
+WFF_StatusEarly:
+db 8B 91 70 29 00 00
 WFF_StatusTick:
 db 85 87 B0 2A 00 00
 WFF_StatusApply:
@@ -240,4 +387,8 @@ unregistersymbol(WFF_StatusApply)
 unregistersymbol(WFF_StatusCFG)
 unregistersymbol(WFF_StatusCalls)
 dealloc(WFF_StatusCode)
+unregistersymbol(WFF_StatusEarly)
+unregistersymbol(WFF_StatusEarlyCalls)
+unregistersymbol(WFF_StatusEarlySeen)
+dealloc(WFF_StatusEarlyCode)
 '''

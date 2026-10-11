@@ -9,10 +9,26 @@ import math
 
 
 ROOT=Path(__file__).resolve().parents[1]
-TABLE=ROOT/"outputs"/"World of Final Fantasy - Original v21.CT"
+TABLE=ROOT/"outputs"/"World of Final Fantasy - Original v29.CT"
 
 
 class TableChecks(unittest.TestCase):
+    def test_v29_cleanup_keeps_game_scripts_unchanged(self):
+        previous=ROOT/'outputs'/'World of Final Fantasy - Original v28.CT'
+        if not previous.exists(): previous=ROOT/'archive'/previous.name
+        old={e.findtext('ID'):e for e in E.parse(previous).findall('.//CheatEntry')}
+        new={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
+        for ident,record in old.items():
+            if ident != '1':
+                self.assertEqual(record.findtext('AssemblerScript'),new[ident].findtext('AssemblerScript'),ident)
+        # Master differs only in the UI information guard, not AA game patches.
+        self.assertEqual(old['1'].findtext('AssemblerScript').split('{$asm}',1)[1],
+                         new['1'].findtext('AssemblerScript').split('{$asm}',1)[1])
+        for ident in range(200,208):
+            folder=new[str(ident)]
+            self.assertEqual(folder.findtext('GroupHeader'),'1')
+            self.assertIsNone(folder.find('AssemblerScript'))
+
     def test_cleanup_and_information_guards(self):
         entries={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
         for ident in ('83','84','85'):
@@ -34,7 +50,7 @@ class TableChecks(unittest.TestCase):
         entries=E.parse(TABLE).findall(".//CheatEntry")
         ids=[e.findtext("ID") for e in entries]
         self.assertEqual(len(ids),len(set(ids)))
-        self.assertEqual(set(ids),{"1","10","11","20","21","30","31","32","40","41","42","43","44","45","50","51","60","61","62","70","80","81","82","83","84","85","90","100","110","111","112","113","114","115","116","117","118","119"})
+        self.assertEqual(set(ids),{"1","10","11","20","21","30","31","32","40","41","42","43","44","45","50","51","60","61","62","70","80","81","82","83","84","85","90","100","110","111","112","113","114","115","116","117","118","119"} | {str(i) for i in range(200,208)})
 
     def test_topple_one_shot_enemy_scope(self):
         e={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
@@ -58,7 +74,7 @@ class TableChecks(unittest.TestCase):
         e={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
         self.assertIsNone(e['118'].find('AssemblerScript'))
         self.assertEqual(e['118'].findtext('GroupHeader'),'1')
-        self.assertIn('UNAVAILABLE',e['118'].findtext('Description'))
+        self.assertIn('unavailable',e['118'].findtext('Description').casefold())
         from woff_accuracy_script import ACCURACY
         s=ACCURACY # Preserve source for investigation, not executable in the table.
         self.assertIn("@battle_attack_hit_check.lua",s)
@@ -89,6 +105,12 @@ class TableChecks(unittest.TestCase):
         self.assertIn('cmp rax,18',script)
         self.assertIn('db 85 87 B0 2A 00 00',script)
         self.assertIn('db 44 89 4C 24 20',script)
+        self.assertIn('db 8B 91 70 29 00 00',script)
+        self.assertIn('cmp dword ptr [rdi+2E34],0',script)
+        self.assertIn('WFF_StatusEarlyMemberLoop:',script)
+        self.assertLess(script.index('label(WFF_StatusCFG)'),script.index('WFF_StatusEarlyCode:'))
+        self.assertIn('push r12',script)
+        self.assertIn('pop r12',script)
 
     def test_critical_and_balance_scope(self):
         entries={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
@@ -104,6 +126,7 @@ class TableChecks(unittest.TestCase):
         self.assertIn('cmp dword ptr [rax+2E34],0',stack)
         self.assertIn('mov [rax+2B28],edx',stack)
         self.assertIn('db F3 0F 10 88 28 2B 00 00',stack)
+        self.assertLess(stack.index('label(WFF_BalanceHudSeen)'),stack.index('registersymbol(WFF_BalanceHudSeen)'))
 
     def test_loot_roll_scope_and_restore(self):
         script=next(e.findtext('AssemblerScript') for e in E.parse(TABLE).findall('.//CheatEntry') if e.findtext('ID')=='100')
@@ -113,6 +136,8 @@ class TableChecks(unittest.TestCase):
         self.assertIn('pushfq',script)
         self.assertIn('popfq',script)
         self.assertIn('db 0F 2F F0 0F 83 F6 01 00 00',script)
+        self.assertIn('assert(WFF_LootAlternatives+2,0F 84 6F 02 00 00)',script)
+        self.assertIn('db 0F 84 6F 02 00 00',script)
         self.assertNotIn('call ',script)
         self.assertNotRegex(script,r'mov\s+\[')
 
@@ -140,8 +165,15 @@ class TableChecks(unittest.TestCase):
         self.assertIn('cmp [rsp+28],r10',script)
         self.assertIn('cmp edx,[WFF_LastCaptureSourceID]',script)
         self.assertIn('mov edx,r11d',script)
-        self.assertNotIn('mov r8d,r11d',script)
-        self.assertNotIn('WFF_ClonePost',script)
+        self.assertIn('mov r8d,r11d',script)
+        self.assertIn('WFF_ClonePost',script)
+        self.assertIn('cmp r10,[rdi+808]',script)
+        self.assertIn('cmp [r10],edx',script)
+        self.assertIn('mov [r10],r11d',script)
+        self.assertIn('db 48 8B BE 80 1B 00 00',script)
+        self.assertIn('db 48 8B 87 00 08 00 00',script)
+        self.assertIn('cmp rdi,[WFF_NamingController]',script)
+        self.assertIn('lock cmpxchg [WFF_NamingPrepared],ecx',script)
         self.assertIn('db 44 8B C0 48 8D 54 24 58',script)
         self.assertIn('db 48 89 5C 24 08',script)
         self.assertNotRegex(script,r'mov\s+(?:dword ptr )?\[(?:rsi|r14|rcx)\+')
@@ -152,7 +184,7 @@ class TableChecks(unittest.TestCase):
         choices=entries['81'].findtext('DropDownList').splitlines()
         self.assertEqual(len(choices),265)
         self.assertEqual(len({row.split(':',1)[0] for row in choices}),265)
-        self.assertTrue(any('EXPERIMENTAL' in row for row in choices))
+        self.assertTrue(any('save risk unverified' in row.casefold() for row in choices))
         self.assertFalse(any(e.findtext('ID') in ('900','901') for e in entries.values()))
 
     def test_replacement_stack_marker_offsets(self):

@@ -276,7 +276,7 @@ def main():
     entries = E.SubElement(root, "CheatEntries")
     info_guard=(ROOT/'work'/'woff_info_readonly.lua').read_text(encoding='utf-8')
     master_script=BOARD.replace('{$asm}',info_guard+'\n{$asm}',1)
-    master=entry(entries,1,"World of Final Fantasy - Original v19 [Enable First]",master_script)
+    master=entry(entries,1,"World of Final Fantasy - Original v21 [Enable First]",master_script)
     E.SubElement(master,"Options",moDeactivateChildrenAsWell="1")
     children=E.SubElement(master,"CheatEntries")
     entry(children,10,"Infinite Gil - Hold 9,999,999 [Balance stays after disable]",GIL)
@@ -351,9 +351,13 @@ def main():
                               (115,"Block Negative Statuses - Party [TEST; does not block KO or cure existing effects]",4)):
         entry(buffchildren,ident,desc,f"[ENABLE]\nWFF_StatusCFG+{offset:X}:\ndb 01\n[DISABLE]\nWFF_StatusCFG+{offset:X}:\ndb 00\n")
     entry(children,116,"Always Critical - Party [Critical-capable attacks only]",CRITICAL.replace('[ENABLE]','[ENABLE]'+guard,1))
-    entry(children,117,"Party Stacks Never Topple [TEST; balance damage; manual unstack still allowed]",STACK.replace('[ENABLE]','[ENABLE]'+guard,1))
-    entry(children,118,"Never Miss - Party [TEST; enable in battle; normal accuracy checks only]",ACCURACY.replace('[ENABLE]','[ENABLE]'+guard,1))
-    entry(children,119,"Topple One Enemy Stack - F8 [Press F8, then Defend before enemy turn; no HP damage]",topple_script())
+    entry(children,117,"Party Stacks Never Topple [Wobble may clear on next action; manual unstack allowed]",STACK.replace('[ENABLE]','[ENABLE]'+guard,1))
+    quarantined=E.SubElement(children,'CheatEntry')
+    text(quarantined,'ID',118)
+    text(quarantined,'Description','"Never Miss - UNAVAILABLE [crash reported; investigation pending]"')
+    text(quarantined,'Color','808080')
+    text(quarantined,'GroupHeader',1)
+    entry(children,119,"Topple One Enemy Stack - F8 [Beep = queued; expires in 3 seconds; resume battle promptly]",topple_script())
     text(root,"UserdefinedSymbols","")
     text(root,"Comments", "Original implementation. DrummerIX reference CT was read for context only; "
          "addresses and machine instructions were independently checked in the running game. "
@@ -434,7 +438,11 @@ def main():
          "User confirmed this topples the Mini Golem/Copper Gnome stack on 2026-10-10. "
          "It is queued, not an immediate command-menu animation. Other encounters remain untested.")
     E.indent(root, space="  ")
-    target=ROOT/"outputs"/"World of Final Fantasy - Original v19.CT"
+    target=ROOT/"outputs"/"World of Final Fantasy - Original v21.CT"
+    root.find('Comments').text += (" v21: F8 beep acknowledges queuing only; requests expire after three real-time seconds, "
+        "even while the command menu pauses battle updates. Never Topple provisionally user-confirmed; existing "
+        "wobble may clear on the next action. Never Miss is unavailable following an unconfirmed crash report; "
+        "no accuracy patch is included. Immediate battle-start buffs and loot effectiveness remain unverified.")
     E.ElementTree(root).write(target,encoding="utf-8",xml_declaration=True)
     (ROOT/'work'/'woff-save.aa').write_text(SAVE.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')
     (ROOT/'work'/'woff-loot.aa').write_text(LOOT.replace('[ENABLE]','[ENABLE]'+guard,1),encoding='utf-8')

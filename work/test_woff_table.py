@@ -9,7 +9,7 @@ import math
 
 
 ROOT=Path(__file__).resolve().parents[1]
-TABLE=ROOT/"outputs"/"World of Final Fantasy - Original v19.CT"
+TABLE=ROOT/"outputs"/"World of Final Fantasy - Original v21.CT"
 
 
 class TableChecks(unittest.TestCase):
@@ -48,13 +48,19 @@ class TableChecks(unittest.TestCase):
         self.assertIn('db F3 0F 59 BF EC 29 00 00',s)
         self.assertIn('end,0x77)',s)
         self.assertIn('getTickCount()-s.requested>3000',s)
+        self.assertIn("pcall(beep)",s)
+        self.assertIn('Beep = queued',e['119'].findtext('Description'))
         self.assertNotIn('createThread',s)
         self.assertNotIn('executeCodeEx',s)
         self.assertNotRegex(s,r'mov\s+(?:dword ptr )?\[rbx\+29C8\]')
 
     def test_accuracy_party_filter_and_restore(self):
         e={e.findtext('ID'):e for e in E.parse(TABLE).findall('.//CheatEntry')}
-        s=e['118'].findtext('AssemblerScript')
+        self.assertIsNone(e['118'].find('AssemblerScript'))
+        self.assertEqual(e['118'].findtext('GroupHeader'),'1')
+        self.assertIn('UNAVAILABLE',e['118'].findtext('Description'))
+        from woff_accuracy_script import ACCURACY
+        s=ACCURACY # Preserve source for investigation, not executable in the table.
         self.assertIn("@battle_attack_hit_check.lua",s)
         self.assertIn('abc(23,1,9,262)',s) # EQ party type with constant zero; enemy skips assignment.
         self.assertIn('abc(2,8,1,0)',s) # Boolean true, not truthy numeric zero.
@@ -95,6 +101,9 @@ class TableChecks(unittest.TestCase):
         self.assertIn('cmp dword ptr [rcx+2E34],0',stack)
         self.assertIn('movss xmm6,[rcx+2B2C]',stack)
         self.assertIn('db F3 0F 11 B1 28 2B 00 00',stack)
+        self.assertIn('cmp dword ptr [rax+2E34],0',stack)
+        self.assertIn('mov [rax+2B28],edx',stack)
+        self.assertIn('db F3 0F 10 88 28 2B 00 00',stack)
 
     def test_loot_roll_scope_and_restore(self):
         script=next(e.findtext('AssemblerScript') for e in E.parse(TABLE).findall('.//CheatEntry') if e.findtext('ID')=='100')

@@ -28,10 +28,16 @@ Enable Topple One Enemy Stack. In battle, press F8, then immediately choose Defe
 
 Buffs need battle time to advance (choose Defend). v18 repairs propagation to stack members and includes observed Lann/Reynn actor classes. Party/enemy separation and member status flags were checked in live memory. These checks are not proof that every effect behaves correctly across later battles; TEST labels remain on status options. Negative-status protection does not revive KO or cure existing effects; duration protection excludes Reflect/Berserk.
 
-Always Critical applies only to critical-capable party attacks. Never Miss affects normal party accuracy checks, not immunity or special scripted rules; enable in battle and retoggle if the battle VM is rebuilt. Party Stacks Never Topple protects balance, not manual unstack commands.
+Always Critical applies only to critical-capable party attacks. Never Miss is unavailable: a possible crash was reported, but causality has not been established. Its executable script is omitted from the current table; source is retained for investigation only. Party Stacks Never Topple protects balance, not manual unstack commands; the user provisionally confirmed protection, with existing wobble clearing after the next action.
 
 Guaranteed Enemy Loot Rolls applies only to positive-chance eligible drops from defeated enemies, not captures. It does not invent rare items, multiply quantities or change quest rewards. A Mu yielded a potion and Gil, but broader effectiveness remains unconfirmed.
 
 ## Save Anywhere
 
 Close and reopen the field menu after changing the toggle. It only removes the field Save entry's permission requirement; no automatic saving, battle/cutscene menus, save-file edits or persistent story flags. Use a separate save slot. Other maps/story states remain untested. Disable restores the original requirement.
+
+## v21 checkpoint — 2026-10-11
+
+F8 accepted-request beep is implemented using Cheat Engine's documented beep function; sound playback is not yet user-tested. It acknowledges queuing only. An unused request expires after three real-time seconds, including time spent in the command menu; it does not persist until the enemy turn. Defend is a convenient way to resume battle updates, not a required native collapse command. Do not press several turns early expecting a persistent request.
+
+Never Topple is provisionally user-confirmed: existing wobble animation cleared after Defend. Immediate menu-time repair remains unconfirmed. Buffs still require battle updates; immediate battle-start application is the next research priority, not an implemented fix. Loot effectiveness remains unconfirmed; positive-chance existing drops only, no invented items or quantity multiplier. Champion cost zero is not implemented and awaits a usable Champion. Replacement catalogue contains candidates, not universal ownership validation. Never Miss is a grey unavailable informational row, not a usable cheat; possible crash causality remains unconfirmed.

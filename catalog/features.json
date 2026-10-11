@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "description": "World of Final Fantasy - Original v19 [Enable First]",
+    "description": "World of Final Fantasy - Original v21 [Enable First]",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Foundation",
     "code_type": "Auto Assembler / Lua",
@@ -281,23 +281,23 @@
   },
   {
     "id": 117,
-    "description": "Party Stacks Never Topple [TEST; balance damage; manual unstack still allowed]",
+    "description": "Party Stacks Never Topple [Wobble may clear on next action; manual unstack allowed]",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Battle stacks",
     "code_type": "Auto Assembler / Lua",
-    "status": "implemented; further gameplay validation pending"
+    "status": "provisionally user-confirmed; existing wobble clears on next action"
   },
   {
     "id": 118,
-    "description": "Never Miss - Party [TEST; enable in battle; normal accuracy checks only]",
+    "description": "Never Miss - UNAVAILABLE [crash reported; investigation pending]",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Battle offense",
-    "code_type": "Auto Assembler / Lua",
-    "status": "implemented; further gameplay validation pending"
+    "code_type": null,
+    "status": "unavailable; possible crash reported, causality unconfirmed"
   },
   {
     "id": 119,
-    "description": "Topple One Enemy Stack - F8 [Press F8, then Defend before enemy turn; no HP damage]",
+    "description": "Topple One Enemy Stack - F8 [Beep = queued; expires in 3 seconds; resume battle promptly]",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Battle stacks",
     "code_type": "Auto Assembler / Lua",

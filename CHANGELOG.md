@@ -21,4 +21,7 @@
 | v18 | Scoped native/UI encounter capture permission for library Mirages; Behemoth captured; member status propagation/classes and Protect/Shell duration counters repaired |
 | v19 | Original game-thread one-shot enemy topple, F8 then Defend before enemy turn; Mini Golem/Copper Gnome confirmed; clearer usage notes |
 
-Old versions are archival snapshots only. Use v19. The capture catalogue and TEST-labelled features remain experimental; pending features are not promoted to completed.
+| v20 | Scoped HUD/wobble balance repair; Never Miss quarantined following an unconfirmed crash report |
+| v21 | F8 accepted-request beep and explicit three-second expiry notes; Never Topple provisional user confirmation; status cleanup |
+
+Old versions are archival snapshots only. Use v21. The capture catalogue and TEST-labelled features remain experimental; pending features are not promoted to completed.

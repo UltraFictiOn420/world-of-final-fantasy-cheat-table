@@ -1,6 +1,6 @@
 # Validation record — 2026-10-10
 
-23 structural/model tests pass on v19. They check XML/IDs, hook restoration and scope, information-row protections, replacement queue/native grant boundaries, save-toggle address resolution, party-status scope/member propagation, accuracy bytecode boundaries, and enemy topple one-shot dispatch. Four installed-catalogue checks also pass. This is not equivalent to testing every game situation.
+23 structural/model tests pass on v21. They check XML/IDs, hook restoration and scope, information-row protections, replacement queue/native grant boundaries, save-toggle address resolution, party-status scope/member propagation, accuracy bytecode boundaries, and enemy topple one-shot dispatch. Four installed-catalogue checks also pass. This is not equivalent to testing every game situation.
 
 User gameplay confirmations: Gil/SP/XP, God Mode/AP, damage and max vitals, zero ability AP cost, both item modes, easy Mu/Chocochick/Behemoth capture, Mu-to-Chocochick and Mu-to-Goblin owned replacement, field saving and reloading, Always Critical, and F8 topple of Mini Golem/Copper Gnome.
 
@@ -12,4 +12,10 @@ Save toggle was additionally compiled and exercised off/on/off successfully afte
 
 Remaining tests: champions/cost-zero implementation, broader enemy-stack/topple and party balance protection, buff behavior across battles, Never Miss, broader loot rolls and future quantity work, broader replacement catalogue and multi-capture, replacement board/ability/save persistence, other save-menu map/story states and non-use inventory removal. These are not marked completed.
 
-v13 changed presentation/provenance and packaging only. v14-v19 add battle features and repairs. Archives include known failed versions for recovery/history, not use; use v19 rather than earlier buff/capture implementations.
+v13 changed presentation/provenance and packaging only. v14-v19 add battle features and repairs. Archives include known failed versions for recovery/history, not use; use v21 rather than earlier buff/capture implementations.
+
+## v21 checkpoint — 2026-10-11
+
+F8 accepted-request beep is implemented using Cheat Engine's documented beep function; sound playback is not yet user-tested. It acknowledges queuing only. An unused request expires after three real-time seconds, including time spent in the command menu; it does not persist until the enemy turn. Defend is a convenient way to resume battle updates, not a required native collapse command. Do not press several turns early expecting a persistent request.
+
+Never Topple is provisionally user-confirmed: existing wobble animation cleared after Defend. Immediate menu-time repair remains unconfirmed. Buffs still require battle updates; immediate battle-start application is the next research priority, not an implemented fix. Loot effectiveness remains unconfirmed; positive-chance existing drops only, no invented items or quantity multiplier. Champion cost zero is not implemented and awaits a usable Champion. Replacement catalogue contains candidates, not universal ownership validation. Never Miss is a grey unavailable informational row, not a usable cheat; possible crash causality remains unconfirmed.

@@ -53,8 +53,63 @@ STACK=r'''[ENABLE]
 aobscanmodule(WFF_BalanceSet,WOFF.exe,F3 0F 11 B1 28 2B 00 00 0F 28 74 24 20 48 83 C4 30)
 assert(WFF_BalanceSet,F3 0F 11 B1 28 2B 00 00)
 alloc(WFF_BalanceCode,256,WFF_BalanceSet)
+aobscanmodule(WFF_BalanceHud,WOFF.exe,F3 0F 10 88 28 2B 00 00 0F 2F C8 77 0E)
+assert(WFF_BalanceHud,F3 0F 10 88 28 2B 00 00)
+alloc(WFF_BalanceHudCode,256,WFF_BalanceHud)
 label(WFF_BalanceNative)
+label(WFF_BalanceHudNative)
 registersymbol(WFF_BalanceSet)
+registersymbol(WFF_BalanceHud)
+registersymbol(WFF_BalanceHudSeen)
+aobscanmodule(WFF_BalanceWobble,WOFF.exe,F3 0F 10 89 28 2B 00 00 66 0F 6E C0 0F 5B C0)
+assert(WFF_BalanceWobble,F3 0F 10 89 28 2B 00 00)
+alloc(WFF_BalanceWobbleCode,256,WFF_BalanceWobble)
+label(WFF_BalanceWobbleNative)
+registersymbol(WFF_BalanceWobble)
+WFF_BalanceWobbleCode:
+pushfq
+push rax
+mov rax,WOFF.exe+2F4B168
+cmp [rcx],rax
+jne WFF_BalanceWobbleNative
+cmp dword ptr [rcx+2E34],0
+jne WFF_BalanceWobbleNative
+cmp dword ptr [rcx+29C8],0
+jle WFF_BalanceWobbleNative
+test byte ptr [rcx+29A8],1
+jnz WFF_BalanceWobbleNative
+mov eax,[rcx+2B2C]
+mov [rcx+2B28],eax
+WFF_BalanceWobbleNative:
+pop rax
+popfq
+movss xmm1,[rcx+2B28]
+jmp WFF_BalanceWobble+8
+WFF_BalanceHudCode:
+pushfq
+push rdx
+mov rdx,WOFF.exe+2F4B168
+cmp [rax],rdx
+jne WFF_BalanceHudNative
+cmp dword ptr [rax+2E34],0
+jne WFF_BalanceHudNative
+cmp dword ptr [rax+29C8],0
+jle WFF_BalanceHudNative
+test byte ptr [rax+29A8],1
+jnz WFF_BalanceHudNative
+// The live HUD supplies its current actor; never cache a battle pointer.
+// Integer copy avoids changing any scratch XMM register or native flags.
+mov edx,[rax+2B2C]
+mov [rax+2B28],edx
+inc dword ptr [WFF_BalanceHudSeen]
+WFF_BalanceHudNative:
+pop rdx
+popfq
+movss xmm1,[rax+2B28]
+jmp WFF_BalanceHud+8
+align 4
+WFF_BalanceHudSeen:
+dd 0
 WFF_BalanceCode:
 pushfq
 push rax
@@ -75,9 +130,24 @@ jmp WFF_BalanceSet+8
 WFF_BalanceSet:
 jmp WFF_BalanceCode
 nop 3
+WFF_BalanceHud:
+jmp WFF_BalanceHudCode
+nop 3
+WFF_BalanceWobble:
+jmp WFF_BalanceWobbleCode
+nop 3
 [DISABLE]
+WFF_BalanceWobble:
+db F3 0F 10 89 28 2B 00 00
+WFF_BalanceHud:
+db F3 0F 10 88 28 2B 00 00
 WFF_BalanceSet:
 db F3 0F 11 B1 28 2B 00 00
 unregistersymbol(WFF_BalanceSet)
 dealloc(WFF_BalanceCode)
+unregistersymbol(WFF_BalanceHud)
+unregistersymbol(WFF_BalanceHudSeen)
+dealloc(WFF_BalanceHudCode)
+unregistersymbol(WFF_BalanceWobble)
+dealloc(WFF_BalanceWobbleCode)
 '''

@@ -127,6 +127,8 @@ local installed,err=pcall(function()
   if not p or readInteger(p)~=0 then return end
   s.requested=getTickCount()
   writeInteger(p,1)
+  -- Acknowledges only an accepted request, not a completed collapse.
+  if type(beep)=='function' then pcall(beep) end
  end,0x77) -- F8: one enemy stack per press, no HP damage.
  s.hotkey.DelayBetweenActivate=750
  s.timer=createTimer(nil,false)

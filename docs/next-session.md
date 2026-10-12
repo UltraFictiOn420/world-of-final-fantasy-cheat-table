@@ -2,7 +2,7 @@
 
 ## Requested for v31 (not applied to v30)
 
-- Rename capture arm control to `2. Leave this on while you are replacing Mirages`.
+- Rename capture arm control to `2. Leave this on until you are done the battle and naming`.
 - Grey out `Features still in testing, but not implemented`.
 
 ## Capture testing and limits

@@ -5,7 +5,7 @@ Ongoing project, not a universally tested final release.
 
 ## Download and start
 
-[Download v30 from the repository](https://github.com/UltraFictiOn420/world-of-final-fantasy-cheat-table/raw/refs/heads/main/outputs/World%20of%20Final%20Fantasy%20-%20Original%20v30.CT).
+[Download the latest v30 release](https://github.com/UltraFictiOn420/world-of-final-fantasy-cheat-table/releases/latest), or [download the table directly](https://github.com/UltraFictiOn420/world-of-final-fantasy-cheat-table/releases/download/v30/World.of.Final.Fantasy.-.Original.v30.CT).
 The existing v29 release remains available as a fallback.
 Open in Cheat Engine, attach to `WOFF.exe`, load a save, then enable the top **Enable First** entry.
 Disable old cheats before loading another table. Back up saves; use separate slots for experimental changes.
@@ -46,4 +46,4 @@ No game binaries/assets, saves, raw memory dumps, credentials or machine-specifi
 Reference tables were studied for context; their scripts are not redistributed. Deleted research repo stays deleted.
 [Launcher project](https://github.com/UltraFictiOn420/world-of-final-fantasy-launcher) remains separate.
 See [usage](docs/usage.md), [testing](docs/testing.md), [next steps](docs/next-session.md), [history](CHANGELOG.md).
-Offline single-player only; no warranty. v30 is backed up on the main branch; the Releases page still contains the previous v29 release. See [v30 notes](docs/v30-release-notes.md) for capture instructions and limits.
+Offline single-player only; no warranty. v30 is published as the latest release; v29 remains available as a fallback. See [v30 notes](docs/v30-release-notes.md) for capture instructions and limits.

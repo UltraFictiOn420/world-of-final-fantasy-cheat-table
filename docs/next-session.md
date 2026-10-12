@@ -1,12 +1,25 @@
-# Resume checkpoint — v29
+# Resume checkpoint — v30, 2026-10-12
 
-- Confirm folders and read-only information guards after loading v29.
-- Continue exact-species normal-obtainability classifications; library presence is not ownership proof.
-- Validate replacement boards/abilities/battle behavior and separate-save/reload persistence.
-- Test duration and negative-status protection separately.
-- Implement champion cost zero when an available champion can be tested.
-- Optional: bounded native loot quantities; no current quantity multiplier.
-- Optional: investigate Never Miss only if proportionate; otherwise leave unavailable.
-- Broader stack/topple, map/story saving and non-use item-removal testing remains.
+## Requested for v31 (not applied to v30)
 
-Disable previous cheats before loading another table. Keep launcher separate and deleted research repo deleted.
+- Rename capture arm control to `2. Leave this on while you are replacing Mirages`.
+- Grey out `Features still in testing, but not implemented`.
+
+## Capture testing and limits
+
+- Confirmed: three separate choices (Chocochick/Mu/Mini Golem) in one battle, correct visuals/default names/ownership and save/reload.
+- Confirmed: mixed source species Copper Gnome/Floating Eye became Chocochick/Mu; correct results and ownership. Save/reload of this pair remains pending.
+- Reset the replacement parent in the field between battles, only after ALL confirmation/naming screens.
+- Full storage, cancellation, and untested replacement species remain unverified.
+- Optional future improvement: safe automatic battle reset, without disrupting pending result screens.
+
+## Other open work
+
+- Broader boards/abilities/battle behavior checks for replacement species.
+- Continue evidence-based ownability classifications; library presence is not safety proof.
+- Verify duration and negative-status protection independently.
+- Test champion cost behavior when a champion is available.
+- Never Miss remains unavailable; no active patch is shipped.
+- Broader stack/topple, save-anywhere and item-removal testing remains useful.
+
+Keep the launcher separate and the deleted research repository deleted. Never publish raw dumps, game assets, saves or local installers.

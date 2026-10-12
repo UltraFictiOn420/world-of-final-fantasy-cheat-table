@@ -1,18 +1,15 @@
-# Current usage — v29
+# Current usage — v30
 
-World of Final Fantasy - Original v29. UI/documentation cleanup; game hooks unchanged from v28.
+World of Final Fantasy - Original v30. Capture replacement update.
 
-START: Attach CE to WOFF.exe, load a save, then enable the top entry. Section folders organize the table; they are not cheat scripts. Enable feature parents before their child options. Disable cheats before closing CE or loading a different table.
+All other game scripts and Mirage dropdown choices are unchanged from v29. Attach CE to the verified WOFF.exe build, enable the top entry, then feature parents.
 
-XP: Results become visible after battle on the field. 0 = none, 1 = normal; 50000x supported. Max Level overrides the multiplier for positive XP awards.
-DAMAGE/AP: One-Hit Kill overrides the player multiplier. God Mode blocks HP damage, not statuses. Always Max applies to living party members, does not revive KO, and may need retoggling if actors rebuild.
-ITEMS: Infinite Usage overrides Never Below 1. You must own the item. Disable for selling, crafting and quest hand-ins until those removal paths are verified. Loot uses native quantities and does not multiply Gil.
-BUFFS: Selected Haste/Regen/Protect/Shell apply before the first action; fresh-battle visuals were user-confirmed. Duration protection and negative-status blocking remain unverified.
-STACKS: Never Topple may leave the wobble animation until the next action. F8 queues ONE enemy stack topple; beep confirms queuing, not completion. Queue expires after three real seconds. Press just before Defend/enemy turn and resume battle promptly.
+MULTI-CAPTURE: Enable the replacement parent before the first capture. Select a Mirage, then enable "2. Leave this on while you wish to replace Mirage replacements". Change the dropdown BEFORE each Imprism if you want different replacements. Each capture snapshots the selection separately; later choices do not overwrite earlier captures. Do not disable the parent, reload the table, or close CE during the battle/results. Complete ALL confirmation and naming screens. In the FIELD, disable/re-enable the replacement parent before selecting and arming another battle. This version handles only ONE battle per parent enable; it does not auto-reset across battles.
 
-CAPTURE: Easy Imprism includes readiness/chance/prism bypass and permission for library-listed Mirages. Story captures can affect progression; use a separate save. Replacement: enable parent, select species, arm once, capture ONE Mirage, and finish battle without disabling/re-arming. Toggle Arm off/on for the next battle. Chocochick capture animation, naming model/default name and owned species were user-confirmed with v27. Other replacement species and save/reload safety are not comprehensively validated.
-DROPDOWN: Name [Size] - ownership status. LL/EX display XL; EX summons are explicitly marked. Legit means normally obtainable, not guaranteed safe under replacement. Classification is partial. Library membership alone does not prove ownability. Hidden/test/unused entries remain unverified, not certified safe or known save-breaking. Grey INFO ONLY rows cannot be frozen/edited through ordinary controls; selectors and multipliers remain editable.
+CONFIRMED: A three-Mandragora battle produced three Chocochick capture animations, confirmation appearances, default names and owned Mirage entries. Queue/list validation passed for all three. User also confirmed the three replacements retained correct species, names and Mirage Boards after save/reload. A second three-Mandragora battle, with the dropdown changed before each capture, produced Chocochick, Mu and Mini Golem: all animations, confirmation/naming screens and owned species were confirmed, and all three retained their correct species after saving and reloading. In a mixed-enemy fight, Copper Gnome -> Chocochick and Floating Eye -> Mu also had correct animations, confirmation/naming screens and owned entries. Defeating another enemy did not add a capture entry. Save/reload of that mixed-source pair, full storage and cancellation are not yet verified. Champion costs remain untested without champions.
 
-SAVE: Field menu only; close/reopen the menu after toggling. Separate save slot recommended. Gil, XP, owned Mirages and other already-applied persistent results are not undone by disabling.
-UNAVAILABLE: Never Miss has no active patch following a possible crash report. Champion cost is not implemented. No temporary traces or auto-running table Lua are included.
-Original scripts; third-party tables were reference context only. Build guard targets the verified WOFF executable. Broader encounter/DLC compatibility still needs testing.
+SAFETY: Have room for every capture. Use a separate save slot. Unusual/hidden dropdown entries remain unverified; normally obtainable does not guarantee safe replacement. On a list mismatch, owned IDs are not replaced, but prior capture animations may already have shown selected species. Check your Mirage list.
+
+SAVE ANYWHERE: Reopen the field menu after toggling. Use a separate save slot.
+
+XP and level changes appear after battle on the field. 0 = none, 1 = normal. Grey INFO rows are read-only, not toggles. No temporary trace or diagnostic hook is included in this file. Saved v29 remains available as a fallback.

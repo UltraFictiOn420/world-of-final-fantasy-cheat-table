@@ -18,4 +18,6 @@
 | v28 | Partial evidence-based ownership classifications; no unproven safety claims |
 | v29 | Organized folders, current help, confirmed buff labels cleaned; gameplay hooks unchanged |
 
-Use v29. Archives preserve development, not safe playable recommendations.
+| v30 | Multiple replacements per battle; independently stored dropdown choices; Easy Imprism permission-filter fix; clean descriptions and no runtime diagnostics |
+
+Use v30; v29 remains a fallback. Archives preserve development, not safe playable recommendations.

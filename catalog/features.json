@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "description": "World of Final Fantasy - Original v29 [Enable First]",
+    "description": "World of Final Fantasy - Original v30 [Enable First]",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Foundation / Organization / Unavailable",
     "code_type": "Auto Assembler / Lua",
@@ -57,7 +57,7 @@
   },
   {
     "id": 30,
-    "description": "XP Options - Enable [XP/levels update after battle, back on field]",
+    "description": "XP Options - Enable [XP/Levels update once fully out of the battle]",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "XP",
     "code_type": "Auto Assembler / Lua",
@@ -289,31 +289,31 @@
   },
   {
     "id": 80,
-    "description": "Next Capture Replacement - Enable [Experimental; ONE capture per battle]",
+    "description": "Capture Replacement - Enable",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Capture",
     "code_type": "Auto Assembler / Lua",
-    "status": "experimental; Chocochick visuals/naming/ownership confirmed; broader safety unverified"
+    "status": "multi-capture tested with per-capture choices and mixed source species; one battle per enable; broader safety unverified"
   },
   {
     "id": 81,
-    "description": "1. Select replacement Mirage [Unusual entries marked; ownership unverified]",
+    "description": "1. Select replacement Mirage in the dropdown menu --->",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Capture",
     "code_type": "4 Bytes",
-    "status": "experimental; Chocochick visuals/naming/ownership confirmed; broader safety unverified"
+    "status": "multi-capture tested with per-capture choices and mixed source species; one battle per enable; broader safety unverified"
   },
   {
     "id": 82,
-    "description": "2. Arm ONE [One capture per battle; off/on to re-arm]",
+    "description": "2. Leave this on while you wish to replace Mirage replacements",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Capture",
     "code_type": "Auto Assembler / Lua",
-    "status": "experimental; Chocochick visuals/naming/ownership confirmed; broader safety unverified"
+    "status": "multi-capture tested with per-capture choices and mixed source species; one battle per enable; broader safety unverified"
   },
   {
     "id": 83,
-    "description": "INFO ONLY - Arm status [Read-only]",
+    "description": "INFO ONLY - Batch preparation [Read-only]",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Capture",
     "code_type": "4 Bytes",
@@ -345,7 +345,7 @@
   },
   {
     "id": 90,
-    "description": "Save Anywhere - Field Menu [Reopen menu after toggling; separate save slot recommended]",
+    "description": "Save Anywhere - Field Menu",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Saving",
     "code_type": "Auto Assembler / Lua",
@@ -353,7 +353,7 @@
   },
   {
     "id": 207,
-    "description": "Unavailable Features [Information only]",
+    "description": "Features still in testing, but not implemented",
     "game": "World of Final Fantasy (Steam/PC)",
     "category": "Foundation / Organization / Unavailable",
     "code_type": "Folder / information",
